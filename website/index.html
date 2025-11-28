@@ -308,3 +308,81 @@
       <a href="#features">Features</a>
       <a href="#ai">AI Copilot</a>
       <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main class="hero">
+    <section>
+      <h1 class="hero-title">
+        Modular &amp; <span>AI-Powered</span> Accounting Platform
+      </h1>
+      <p class="hero-subtitle">
+        Majelani Accounting is a next-generation accounting environment built around plugins,
+        automation, and intelligent assistants — designed for businesses that want clarity,
+        speed, and control.
+      </p>
+
+      <div class="hero-badges">
+        <span class="badge">Plugin-based architecture</span>
+        <span class="badge">AI analysis &amp; summaries</span>
+        <span class="badge">Cloud ready</span>
+      </div>
+
+      <div class="hero-actions">
+        <a href="#contact" class="btn-primary">
+          <span>Join the early access list</span>
+          <span class="chevron">›</span>
+        </a>
+        <a href="#features" class="btn-ghost">Explore features</a>
+      </div>
+
+      <p class="hero-meta">
+        Phase 1: Website &amp; brand. Platform plugins, AI copilots, and dashboards are in active development.
+      </p>
+    </section>
+
+    <section class="hero-right" id="ai">
+      <div class="glass-panel">
+        <div class="glass-header">
+          <span>Majelani AI Copilot • Preview</span>
+          <span class="status-dot"></span>
+        </div>
+
+        <div class="ai-input">
+          <div class="ai-input-label">Prompt</div>
+          <div class="ai-input-text">
+Summarize all unpaid invoices,
+forecast cash-flow for the next 30 days,
+and highlight the three highest-risk customers.
+          </div>
+        </div>
+
+        <div class="ai-tags">
+          <span class="ai-tag">Accounts Receivable</span>
+          <span class="ai-tag">Risk Scoring</span>
+          <span class="ai-tag">Cash-flow Forecast</span>
+        </div>
+
+        <div class="ai-summary">
+          <div class="ai-summary-title">AI Summary – Draft</div>
+          <ul>
+            <li>Unpaid invoices: 37 (total: $128,900)</li>
+            <li>Projected 30-day cash-in: $92,500</li>
+            <li>High-risk customers: 3 (late &gt; 60 days)</li>
+            <li>Suggested actions: payment plans + reminder sequences</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="contact">
+    <span>© <span id="year"></span> Majelani Accounting. All rights reserved.</span>
+    <span>Contact: info@majelaniaccounting.com</span>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
