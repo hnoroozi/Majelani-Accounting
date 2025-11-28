@@ -171,4 +171,74 @@
             box-shadow: 0 0 18px rgba(39, 176, 255, 0.6);
         }
 
-        .btn-primary span.chevron
+        .btn-primary span.chevron {
+            font-size: 14px;
+            transform: translateY(1px);
+        }
+
+        .btn-ghost {
+            border-color: rgba(124, 245, 255, 0.4);
+            color: #d7f7ff;
+            background: radial-gradient(circle at top, rgba(124, 245, 255, 0.12), transparent);
+        }
+
+        .btn-ghost:hover {
+            border-color: #7cf5ff;
+        }
+
+        .hero-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 16px;
+        }
+
+        .hero-right {
+            position: relative;
+        }
+
+        .glass-panel {
+            position: relative;
+            border-radius: 20px;
+            padding: 18px 18px 16px;
+            background: linear-gradient(135deg, rgba(19, 26, 58, 0.95), rgba(11, 19, 38, 0.98));
+            box-shadow:
+                0 0 0 1px rgba(124, 245, 255, 0.08),
+                0 24px 60px rgba(0, 0, 0, 0.9);
+            overflow: hidden;
+        }
+
+        .glass-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #3ff5a8;
+            box-shadow: 0 0 10px rgba(63, 245, 168, 0.9);
+        }
+
+        .ai-input {
+            border-radius: 14px;
+            padding: 10px 11px;
+            border: 1px solid rgba(124, 245, 255, 0.35);
+            background: radial-gradient(circle at top left, rgba(39, 176, 255, 0.35), rgba(1, 6, 12, 0.98));
+            font-size: 11px;
+            color: #e9f7ff;
+            margin-bottom: 12px;
+        }
+
+        .ai-input-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .ai-input-text {
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Reg
