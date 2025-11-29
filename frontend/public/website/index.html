@@ -92,19 +92,138 @@
       width: 100%;
     }
 
+    /* ---------- AI Assistant Section ---------- */
+
+    .ai-section {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 40px 6vw 10px;
+    }
+
+    .ai-box {
+      background: rgba(10, 12, 30, 0.85);
+      padding: 24px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 720px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(124, 245, 255, 0.15);
+      box-shadow:
+        0 0 0 1px rgba(124, 245, 255, 0.08),
+        0 18px 45px rgba(0, 0, 0, 0.9);
+    }
+
+    .ai-title {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #7cf5ff;
+    }
+
+    .ai-input {
+      width: 100%;
+      height: 120px;
+      border-radius: 10px;
+      padding: 12px;
+      resize: vertical;
+      border: 1px solid rgba(124, 245, 255, 0.35);
+      background: #050713;
+      color: #e9f7ff;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .ai-input::placeholder {
+      color: rgba(164, 169, 195, 0.8);
+    }
+
+    .ai-button {
+      margin-top: 4px;
+      padding: 10px 22px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(120deg, #27b0ff, #7cf5ff);
+      color: #021018;
+      font-weight: 600;
+      font-size: 14px;
+      box-shadow: 0 0 16px rgba(39, 176, 255, 0.6);
+    }
+
+    .ai-subtitle {
+      margin-top: 18px;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .ai-output {
+      white-space: pre-wrap;
+      background: #050713;
+      color: #7cf5ff;
+      padding: 14px;
+      border-radius: 10px;
+      min-height: 70px;
+      border: 1px solid rgba(124, 245, 255, 0.3);
+      font-size: 13px;
+    }
+
+    /* ---------- AI Loading Animation ---------- */
+
+    .ai-loading {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #7cf5ff;
+    }
+
+    .ai-loading-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #7cf5ff;
+      opacity: 0.35;
+      animation: aiDotBounce 1s infinite ease-in-out;
+    }
+
+    .ai-loading-dot:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    .ai-loading-dot:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .ai-loading-label {
+      opacity: 0.8;
+    }
+
+    @keyframes aiDotBounce {
+      0%, 80%, 100% {
+        transform: translateY(0);
+        opacity: 0.35;
+      }
+      40% {
+        transform: translateY(-4px);
+        opacity: 1;
+      }
+    }
+
+    /* ---------- Hero & Copilot ---------- */
+
     .hero {
       flex: 1;
       display: grid;
       grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
       gap: 40px;
-      padding: 60px 6vw 70px;
+      padding: 30px 6vw 70px;
       align-items: center;
     }
 
     @media (max-width: 880px) {
       .hero {
         grid-template-columns: minmax(0, 1fr);
-        padding-top: 32px;
+        padding-top: 16px;
       }
     }
 
@@ -224,7 +343,7 @@
       box-shadow: 0 0 10px rgba(63, 245, 168, 0.9);
     }
 
-    .ai-input {
+    .ai-input-block {
       border-radius: 14px;
       padding: 10px 11px;
       border: 1px solid rgba(124, 245, 255, 0.35);
@@ -296,6 +415,32 @@
       flex-wrap: wrap;
       background: radial-gradient(circle at bottom, #0c1020 0, #050711 55%);
     }
+  
+    .loading-dots span {
+  opacity: 0;
+  animation: blink 1.4s infinite;
+  color: #27b0ff;
+  font-weight: bold;
+  font-size: 20px;
+  margin-left: 2px;
+}
+
+.loading-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+  
   </style>
 </head>
 <body>
@@ -311,8 +456,42 @@
     </nav>
   </header>
 
+  <!-- Centered AI Assistant Section -->
+  <section id="ai-assistant" class="ai-section">
+    <div class="ai-box">
+      <h2 class="ai-title">Majelani AI Assistant</h2>
+  <textarea
+    id="inputText"
+    class="ai-input"
+    placeholder="Enter your accounting text or question..."
+  ></textarea>
+
+  <div style="margin: 8px 0 4px; display: flex; gap: 10px; align-items: center;">
+    <label for="aiMode" style="font-size: 13px; color: var(--text-muted);">
+      Mode:
+    </label>
+    <select id="aiMode" style="
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(124, 245, 255, 0.35);
+      background: #050713;
+      color: #e9f7ff;
+      font-size: 13px;
+    ">
+      <option value="summary">Summarize text</option>
+      <option value="explain">Explain concept</option>
+    </select>
+  </div>
+
+  <button id="sendToAiBtn" class="ai-button">Send to AI</button>
+
+  <h3 class="ai-subtitle">Summary</h3>
+  <div id="summaryBox" class="ai-output"></div>
+      </div>
+    </section>
+
   <main class="hero">
-    <section>
+    <section id="features">
       <h1 class="hero-title">
         Modular &amp; <span>AI-Powered</span> Accounting Platform
       </h1>
@@ -348,7 +527,7 @@
           <span class="status-dot"></span>
         </div>
 
-        <div class="ai-input">
+        <div class="ai-input-block">
           <div class="ai-input-label">Prompt</div>
           <div class="ai-input-text">
 Summarize all unpaid invoices,
@@ -384,5 +563,8 @@ and highlight the three highest-risk customers.
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
+
+  <!-- Load frontend API logic (module) -->
+  <script type="module" src="./js/api.js"></script>
 </body>
 </html>
