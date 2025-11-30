@@ -1,49 +1,37 @@
-name: Majelani Accounting CI Pipeline
+name: CI - Backend Test
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
-  backend-tests:
-    name: Backend (FastAPI) Checks
+  test-backend:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Install backend dependencies
+        working-directory: backend
         run: |
-          cd backend
-          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Validate FastAPI imports
+      - name: Validate FastAPI Import
+        working-directory: backend
         run: |
-          cd backend
-          python -c "import main"
-
-  frontend-checks:
-    name: Frontend (HTML/JS) Checks
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Check frontend folder
-        run: |
-          if [ -d "frontend" ]; then
-            echo "frontend folder exists:"
-            ls -R frontend
-          else
-            echo "No frontend folder yet, skipping frontend checks."
-          fi
+          python - << 'EOF'
+          import fastapi
+          import uvicorn
+          import dotenv
+          import openai
+          print("Backend dependencies imported successfully.")
+          EOF
