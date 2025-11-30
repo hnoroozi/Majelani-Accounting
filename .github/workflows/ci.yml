@@ -2,17 +2,18 @@ name: Majelani Accounting CI Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   pull_request:
+    branches: [ "main" ]
 
 jobs:
-  build:
+  backend-tests:
+    name: Backend (FastAPI) Checks
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -22,10 +23,22 @@ jobs:
       - name: Install backend dependencies
         run: |
           cd backend
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Validate FastAPI imports
         run: |
           cd backend
           python -c "import main"
+
+  frontend-checks:
+    name: Frontend (HTML/JS) Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: List frontend files
+        run: |
+          ls -R frontend || echo "No frontend folder yet"
