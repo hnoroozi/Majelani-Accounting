@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from pydantic import BaseModel
+from fastapi import FastAPI
 from openai import OpenAI, OpenAIError
 import os
 
@@ -9,6 +10,9 @@ import os
 load_dotenv()
 
 app = FastAPI()
+class AIRequest(BaseModel):
+    text: str
+    mode: str = "summarize"
 
 # Allowed frontends (local + production)
 origins = [
@@ -170,3 +174,24 @@ async def ai_explain(request: SummaryRequest):
 
     explanation = response.choices[0].message.content
     return {"summary": explanation}
+
+@app.post("/ai")
+async def ai_router(request: AIRequest):
+    """
+    Unified endpoint for the frontend.
+    mode:
+      - "summarize" -> use /ai/summary logic
+      - "explain"   -> use /ai/explain logic
+    """
+    # Reuse existing handlers so we don't duplicate logic
+    summary_request = SummaryRequest(text=request.text)
+
+    if request.mode == "summarize":
+        return await ai_summary(summary_request)
+    elif request.mode == "explain":
+        return await ai_explain(summary_request)
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid mode. Use 'summarize' or 'explain'.",
+        )
