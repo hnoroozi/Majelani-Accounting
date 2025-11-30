@@ -39,6 +39,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: List frontend files
+      - name: Check frontend folder
         run: |
-          ls -R frontend || echo "No frontend folder yet"
+          if [ -d "frontend" ]; then
+            echo "frontend folder exists:"
+            ls -R frontend
+          else
+            echo "No frontend folder yet, skipping frontend checks."
+          fi
