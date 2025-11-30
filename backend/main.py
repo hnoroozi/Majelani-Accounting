@@ -31,8 +31,18 @@ app.add_middleware(
 )
 
 # OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client: OpenAI | None = None
 
+def get_client() -> OpenAI:
+    """Lazy OpenAI client: created only when needed."""
+    global client
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        # Raise a clear error only when an AI endpoint is actually called
+        raise OpenAIError("OPENAI_API_KEY environment variable is not set.")
+    if client is None:
+        client = OpenAI(api_key=api_key)
+    return client
 
 class SummaryRequest(BaseModel):
     text: str
