@@ -1,8 +1,39 @@
-echo "venv/
+# Python
 __pycache__/
-instance/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+*.venv
 .env
-*.sqlite3
-*.pyc
+.venv/
+venv/
+env/
+ENV/
+
+# Virtual environments (backend)
+backend/.venv/
+backend/venv/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
 *.log
-*.db" > .gitignore
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+
+# Node / Frontend (if added later)
+node_modules/
+dist/
+out/
