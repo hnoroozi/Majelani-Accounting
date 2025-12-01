@@ -34,16 +34,29 @@ async function callBackend(endpoint, payload) {
     
     if (!response.ok) {
       let errorMessage = `Request failed with status ${response.status}`;
+      let errorDetails = null;
       
       try {
         const errorData = await response.json();
         errorMessage = errorData.error || errorMessage;
+        errorDetails = errorData.details || null;
+        
+        console.error('API Error Response:', {
+          status: response.status,
+          error: errorData.error,
+          details: errorData.details,
+          url: response.url
+        });
       } catch {
         const errorText = await response.text().catch(() => '');
-        if (errorText) errorMessage = errorText;
+        if (errorText) {
+          errorMessage = errorText;
+          console.error('API Error Text:', errorText);
+        }
       }
       
-      throw new APIError(errorMessage, response.status, response);
+      const fullMessage = errorDetails ? `${errorMessage} (${errorDetails})` : errorMessage;
+      throw new APIError(fullMessage, response.status, response);
     }
     
     const data = await response.json();

@@ -5,9 +5,9 @@ const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 
 // CORS configuration
 const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': 'https://www.majelaniaccounting.com',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS, GET',
+  'Access-Control-Allow-Headers': 'Content-Type, Accept',
   'Access-Control-Max-Age': '86400',
 };
 
@@ -23,30 +23,36 @@ function handleCORS(request) {
 }
 
 // OpenAI API call helper
-async function callOpenAI(apiKey, messages, maxTokens = 300) {
-  const response = await fetch(OPENAI_API_URL, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'gpt-4.1-mini',
-      messages,
-      max_tokens: maxTokens,
-      temperature: 0.4,
-    }),
-  });
+async function callOpenAI(env, messages, maxTokens = 300) {
+  try {
+    const response = await fetch(OPENAI_API_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages,
+        max_tokens: maxTokens,
+        temperature: 0.4,
+      }),
+    });
 
-  if (!response.ok) {
-    throw new Error(`OpenAI API error: ${response.status}`);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`OpenAI API error ${response.status}: ${errorData.error?.message || 'Unknown error'}`);
+    }
+
+    const data = await response.json();
+    return data.choices[0].message.content;
+  } catch (error) {
+    console.error('OpenAI API Error:', error);
+    throw error;
   }
-
-  const data = await response.json();
-  return data.choices[0].message.content;
 }
 
-async function handleSummary(request, apiKey) {
+async function handleSummary(request, env) {
   try {
     const { text } = await request.json();
 
@@ -77,7 +83,7 @@ Focus on clarity and practical insight.`,
       },
     ];
 
-    const summary = await callOpenAI(apiKey, messages);
+    const summary = await callOpenAI(env, messages);
 
     return new Response(
       JSON.stringify({ summary }),
@@ -87,14 +93,18 @@ Focus on clarity and practical insight.`,
       },
     );
   } catch (error) {
+    console.error('Summary Error:', error);
     return new Response(
-      JSON.stringify({ error: 'Failed to process summary request' }),
+      JSON.stringify({ 
+        error: 'Failed to process summary request', 
+        details: error.message 
+      }),
       { status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } },
     );
   }
 }
 
-async function handleExplain(request, apiKey) {
+async function handleExplain(request, env) {
   try {
     const { text } = await request.json();
 
@@ -125,7 +135,7 @@ Use short paragraphs and bullet points where helpful.`,
       },
     ];
 
-    const explanation = await callOpenAI(apiKey, messages, 450);
+    const explanation = await callOpenAI(env, messages, 450);
 
     return new Response(
       JSON.stringify({ summary: explanation }),
@@ -135,8 +145,12 @@ Use short paragraphs and bullet points where helpful.`,
       },
     );
   } catch (error) {
+    console.error('Explain Error:', error);
     return new Response(
-      JSON.stringify({ error: 'Failed to process explanation request' }),
+      JSON.stringify({ 
+        error: 'Failed to process explanation request', 
+        details: error.message 
+      }),
       { status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } },
     );
   }
@@ -144,30 +158,39 @@ Use short paragraphs and bullet points where helpful.`,
 
 export default {
   async fetch(request, env, ctx) {
-    const apiKey = env.OPENAI_API_KEY;
-    if (!apiKey) {
+    const url = new URL(request.url);
+
+    // Handle CORS preflight
+    const corsResponse = handleCORS(request);
+    if (corsResponse) return corsResponse;
+
+    // Check API key
+    if (!env.OPENAI_API_KEY) {
       return new Response(
-        JSON.stringify({ error: 'OPENAI_API_KEY is not configured in Worker environment.' }),
+        JSON.stringify({ 
+          error: 'OPENAI_API_KEY is not configured in Worker environment.',
+          status: 'configuration_error'
+        }),
         { status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } },
       );
     }
 
-    const url = new URL(request.url);
-
-    const corsResponse = handleCORS(request);
-    if (corsResponse) return corsResponse;
-
+    // Route handlers
     if (url.pathname === '/api/summary' && request.method === 'POST') {
-      return handleSummary(request, apiKey);
+      return handleSummary(request, env);
     }
 
     if (url.pathname === '/api/explain' && request.method === 'POST') {
-      return handleExplain(request, apiKey);
+      return handleExplain(request, env);
     }
 
     if (url.pathname === '/' || url.pathname === '/health') {
       return new Response(
-        JSON.stringify({ message: 'Majelani Accounting AI Backend Ready' }),
+        JSON.stringify({ 
+          message: 'Majelani Accounting AI Backend Ready',
+          status: 'healthy',
+          timestamp: new Date().toISOString()
+        }),
         {
           status: 200,
           headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
@@ -176,7 +199,7 @@ export default {
     }
 
     return new Response(
-      JSON.stringify({ error: 'Not Found' }),
+      JSON.stringify({ error: 'Not Found', path: url.pathname }),
       { status: 404, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } },
     );
   },

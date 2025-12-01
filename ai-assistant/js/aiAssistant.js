@@ -92,8 +92,28 @@ class AIAssistant {
       this.showStatus('Analysis completed successfully!', 'success');
       
     } catch (error) {
-      console.error('AI Assistant Error:', error);
-      this.showStatus('Failed to process your request. Please try again.', 'error');
+      console.error('AI Assistant Error Details:', {
+        message: error.message,
+        status: error.status,
+        name: error.name,
+        stack: error.stack
+      });
+      
+      let errorMessage = 'Failed to process your request.';
+      
+      if (error.status === 408) {
+        errorMessage = 'Request timeout. Please try again.';
+      } else if (error.status === 400) {
+        errorMessage = 'Invalid request. Please check your input.';
+      } else if (error.status === 500) {
+        errorMessage = 'Server error. Please try again later.';
+      } else if (error.message && error.message.includes('OpenAI')) {
+        errorMessage = 'AI service temporarily unavailable. Please try again.';
+      } else if (error.message) {
+        errorMessage = `Error: ${error.message}`;
+      }
+      
+      this.showStatus(errorMessage, 'error');
       this.elements.result.textContent = '';
     } finally {
       this.setLoadingState(false);
