@@ -1,0 +1,13 @@
+{
+  "name": "majelani-ai-backend",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker backend for Majelani Accounting AI features",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --env production"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

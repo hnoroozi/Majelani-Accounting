@@ -1,0 +1,10 @@
+name = "majelani-ai-backend"
+main = "src/index.js"
+compatibility_date = "2024-01-15"
+
+[env.production]
+name = "majelani-ai-backend"
+route = "api.majelaniaccounting.com/*"
+
+[env.production.vars]
+ENVIRONMENT = "production"

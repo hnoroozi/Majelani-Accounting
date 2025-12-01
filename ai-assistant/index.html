@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant - Majelani Accounting</title>
+    <style>
+/* AI Assistant card styles */
+.ai-card {
+  max-width: 960px;
+  margin: 2rem auto;
+  padding: 1.75rem 2rem;
+  border-radius: 12px;
+  background: #0f172a;
+  color: #e5e7eb;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.ai-title {
+  font-size: 1.7rem;
+  margin-bottom: 0.25rem;
+}
+
+.ai-subtitle {
+  margin-bottom: 1.25rem;
+  color: #9ca3af;
+}
+
+.ai-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ai-label {
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+.ai-textarea {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid #4b5563;
+  background: #020617;
+  color: #e5e7eb;
+  resize: vertical;
+}
+
+.ai-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ai-select {
+  min-width: 220px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #4b5563;
+  background: #020617;
+  color: #e5e7eb;
+}
+
+.ai-button {
+  margin-top: 0.5rem;
+  align-self: flex-start;
+  padding: 0.6rem 1.4rem;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #22d3ee, #3b82f6);
+  color: #020617;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.ai-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+  box-shadow: none;
+}
+
+.ai-button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.6);
+}
+
+.ai-status {
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+}
+
+.ai-status[data-type="success"] {
+  color: #22c55e;
+}
+
+.ai-status[data-type="error"] {
+  color: #f97373;
+}
+
+.ai-status[data-type="warning"] {
+  color: #facc15;
+}
+
+.ai-result-wrapper {
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.4);
+  padding-top: 1rem;
+}
+
+.ai-result-title {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #e5e7eb;
+}
+
+.ai-result {
+  white-space: pre-wrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  background: #020617;
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid #4b5563;
+  max-height: 350px;
+  overflow: auto;
+}
+    </style>
+</head>
+<body>
+    <section id="ai-tools" class="ai-card">
+      <h2 class="ai-title">AI Accounting Assistant</h2>
+      <p class="ai-subtitle">
+        Write your accounting text or question, choose a mode, and let the AI help you.
+      </p>
+
+      <form id="ai-form" class="ai-form">
+        <label for="ai-input" class="ai-label">Your text or question</label>
+        <textarea
+          id="ai-input"
+          class="ai-textarea"
+          rows="6"
+          placeholder="Paste an accounting note, email, or question here..."
+        ></textarea>
+
+        <div class="ai-row">
+          <label for="ai-mode" class="ai-label">Mode</label>
+          <select id="ai-mode" class="ai-select">
+            <option value="summary">Summarize this text</option>
+            <option value="explain">Explain this concept</option>
+          </select>
+        </div>
+
+        <button id="ai-submit" class="ai-button" type="submit">
+          Ask AI
+        </button>
+
+        <div id="ai-status" class="ai-status" data-type="idle"></div>
+      </form>
+
+      <div class="ai-result-wrapper">
+        <h3 class="ai-result-title">AI Response</h3>
+        <pre id="ai-result" class="ai-result"></pre>
+      </div>
+    </section>
+    
+    <script type="module" src="/ai-assistant/js/apiClient.js"></script>
+</body>
+</html>
