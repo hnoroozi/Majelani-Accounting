@@ -2,7 +2,6 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from pydantic import BaseModel
-from fastapi import FastAPI
 from openai import OpenAI, OpenAIError
 import os
 
@@ -10,25 +9,19 @@ import os
 load_dotenv()
 
 app = FastAPI()
+
+# Add CORS middleware FIRST
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
+)
+
 class AIRequest(BaseModel):
     text: str
     mode: str = "summarize"
-
-# Allowed frontends (local + production)
-origins = [
-    "http://127.0.0.1:5500",
-    "http://localhost:5500",
-    "https://www.majelaniaccounting.com",
-    "https://majelaniaccounting.com",
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # OpenAI client
 client: OpenAI | None = None
@@ -46,11 +39,18 @@ def get_client() -> OpenAI:
 
 class SummaryRequest(BaseModel):
     text: str
+    lang: str = "auto"
 
 
 @app.get("/")
 def root():
     return {"message": "Majelani Accounting Backend Ready"}
+
+@app.get("/health")
+def health():
+    return {"status": "healthy", "message": "Backend is running"}
+
+
 
 
 @app.post("/ai/summary")
@@ -58,30 +58,39 @@ async def ai_summary(request: SummaryRequest):
     """
     Mode 1: Summarize accounting text in 3-6 bullet points.
     """
-    if not client.api_key:
-        raise HTTPException(
-            status_code=500,
-            detail="OPENAI_API_KEY is not set on the server.",
-        )
-
     if not request.text.strip():
         raise HTTPException(
             status_code=400,
             detail="Text is required.",
         )
+    
+    # Check if OpenAI API key is configured
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key or api_key == "sk-test-key-for-development":
+        return {
+            "summary": f"⚠️ OpenAI API key not configured\n\nTo get real AI responses:\n1. Get an OpenAI API key from https://platform.openai.com\n2. Add it to backend/.env file:\nOPENAI_API_KEY=your_key_here\n3. Restart backend"
+        }
+    
+    try:
+        openai_client = get_client()
+    except OpenAIError as e:
+        raise HTTPException(
+            status_code=500,
+            detail=str(e),
+        )
 
-    prompt = (
-        "You are an AI assistant for Majelani Accounting. "
-        "The user may write in English or Persian (Farsi). "
-        "Summarize the following accounting-related text in 3–6 short bullet points. "
-        "If the input is in Persian, answer in Persian. "
-        "If the input is in English, answer in English.\n\n"
-        f"{request.text}"
-    )
+    # Enhanced multilingual prompt based on detected language
+    lang_instruction = ""
+    if request.lang == "fa":
+        lang_instruction = "The user has written in Persian/Farsi. Respond in natural, professional Persian with proper RTL formatting."
+    else:
+        lang_instruction = "The user has written in English. Respond in clear, professional English."
+    
+    prompt = f"{lang_instruction}\n\nSummarize the following accounting text in 3-6 bullet points:\n\n{request.text}"
 
     try:
-        response = client.chat.completions.create(
-        model="gpt-4.1-mini",
+        response = openai_client.chat.completions.create(
+        model="gpt-4o-mini",
         messages=[
             {
                 "role": "system",
@@ -124,10 +133,12 @@ async def ai_explain(request: SummaryRequest):
     """
     Mode 2: Explain an accounting concept in simple language for beginners.
     """
-    if not client.api_key:
+    try:
+        openai_client = get_client()
+    except OpenAIError as e:
         raise HTTPException(
             status_code=500,
-            detail="OPENAI_API_KEY is not set on the server.",
+            detail=str(e),
         )
 
     if not request.text.strip():
@@ -136,19 +147,18 @@ async def ai_explain(request: SummaryRequest):
             detail="Text is required.",
         )
 
-    prompt = (
-        "You are an accounting teacher for Majelani Accounting users. "
-        "The user may ask about an accounting concept in English or Persian (Farsi). "
-        "Explain the concept in simple language suitable for a beginner. "
-        "If the question is in Persian, answer in Persian. "
-        "If the question is in English, answer in English. "
-        "Use short paragraphs and bullet points where helpful.\n\n"
-        f"User question: {request.text}"
-    )
+    # Enhanced multilingual prompt based on detected language
+    lang_instruction = ""
+    if request.lang == "fa":
+        lang_instruction = "The user has asked in Persian/Farsi. Explain in natural, educational Persian with proper RTL formatting and clear examples."
+    else:
+        lang_instruction = "The user has asked in English. Explain in clear, educational English with examples."
+    
+    prompt = f"{lang_instruction}\n\nExplain this accounting concept for beginners:\n\n{request.text}"
 
     try:
-        response = client.chat.completions.create(
-            model="gpt-4.1-mini",
+        response = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
             messages=[
                 {
                     "role": "system",
