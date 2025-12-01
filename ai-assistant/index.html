@@ -4,172 +4,358 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Assistant - Majelani Accounting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-/* AI Assistant card styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #22d3ee, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  color: #94a3b8;
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
 .ai-card {
-  max-width: 960px;
-  margin: 2rem auto;
-  padding: 1.75rem 2rem;
-  border-radius: 12px;
-  background: #0f172a;
-  color: #e5e7eb;
-  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
 }
 
-.ai-title {
-  font-size: 1.7rem;
-  margin-bottom: 0.25rem;
-}
-
-.ai-subtitle {
-  margin-bottom: 1.25rem;
-  color: #9ca3af;
+.ai-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 35px 70px rgba(0, 0, 0, 0.4);
 }
 
 .ai-form {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .ai-label {
-  font-size: 0.9rem;
-  color: #9ca3af;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #e2e8f0;
 }
 
 .ai-textarea {
   width: 100%;
-  padding: 0.75rem 0.9rem;
-  border-radius: 8px;
-  border: 1px solid #4b5563;
-  background: #020617;
-  color: #e5e7eb;
-  resize: vertical;
+  min-height: 120px;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 2px solid rgba(148, 163, 184, 0.2);
+  background: rgba(2, 6, 23, 0.6);
+  color: #e2e8f0;
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: none;
+  transition: all 0.3s ease;
+  font-family: inherit;
 }
 
-.ai-row {
+.ai-textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.ai-textarea::placeholder {
+  color: #64748b;
+}
+
+.form-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: center;
-  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
 }
 
 .ai-select {
-  min-width: 220px;
-  padding: 0.5rem 0.75rem;
-  border-radius: 8px;
-  border: 1px solid #4b5563;
-  background: #020617;
-  color: #e5e7eb;
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 2px solid rgba(148, 163, 184, 0.2);
+  background: rgba(2, 6, 23, 0.6);
+  color: #e2e8f0;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ai-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .ai-button {
-  margin-top: 0.5rem;
-  align-self: flex-start;
-  padding: 0.6rem 1.4rem;
-  border-radius: 999px;
+  padding: 0.75rem 2rem;
+  border-radius: 12px;
   border: none;
   background: linear-gradient(135deg, #22d3ee, #3b82f6);
   color: #020617;
   font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4);
 }
 
 .ai-button:disabled {
-  opacity: 0.6;
-  cursor: default;
-  box-shadow: none;
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }
 
-.ai-button:not(:disabled):hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.6);
+.loading-spinner {
+  display: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(2, 6, 23, 0.3);
+  border-top: 2px solid #020617;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .ai-status {
-  margin-top: 0.35rem;
-  font-size: 0.85rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(-10px);
 }
 
-.ai-status[data-type="success"] {
+.ai-status.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ai-status.success {
+  background: rgba(34, 197, 94, 0.1);
   color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.2);
 }
 
-.ai-status[data-type="error"] {
-  color: #f97373;
+.ai-status.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
-.ai-status[data-type="warning"] {
-  color: #facc15;
+.ai-status.info {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 .ai-result-wrapper {
-  margin-top: 1.5rem;
-  border-top: 1px solid rgba(148, 163, 184, 0.4);
-  padding-top: 1rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 .ai-result-title {
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-  color: #e5e7eb;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 1rem;
 }
 
 .ai-result {
-  white-space: pre-wrap;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
-  font-size: 0.92rem;
-  line-height: 1.5;
-  background: #020617;
-  border-radius: 8px;
-  padding: 0.75rem 0.9rem;
-  border: 1px solid #4b5563;
-  max-height: 350px;
-  overflow: auto;
+  background: rgba(2, 6, 23, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #e2e8f0;
+  max-height: 500px;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+}
+
+.ai-result.rtl {
+  direction: rtl;
+  text-align: right;
+  font-family: 'Tahoma', 'Arial', sans-serif;
+}
+
+.ai-result.ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+.ai-result h1, .ai-result h2, .ai-result h3 {
+  color: #22d3ee;
+  margin: 1rem 0 0.5rem 0;
+}
+
+.ai-result h1 { font-size: 1.4rem; }
+.ai-result h2 { font-size: 1.2rem; }
+.ai-result h3 { font-size: 1.1rem; }
+
+.ai-result strong {
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+.ai-result ul, .ai-result ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.ai-result.rtl ul, .ai-result.rtl ol {
+  padding-right: 1.5rem;
+  padding-left: 0;
+}
+
+.ai-result li {
+  margin: 0.25rem 0;
+}
+
+.ai-result p {
+  margin: 0.75rem 0;
+}
+
+.ai-result code {
+  background: rgba(59, 130, 246, 0.1);
+  color: #22d3ee;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  .ai-card {
+    padding: 1.5rem;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .ai-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 0.5rem;
+  }
+  
+  .header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .ai-card {
+    padding: 1rem;
+  }
 }
     </style>
 </head>
 <body>
-    <section id="ai-tools" class="ai-card">
-      <h2 class="ai-title">AI Accounting Assistant</h2>
-      <p class="ai-subtitle">
-        Write your accounting text or question, choose a mode, and let the AI help you.
-      </p>
-
-      <form id="ai-form" class="ai-form">
-        <label for="ai-input" class="ai-label">Your text or question</label>
-        <textarea
-          id="ai-input"
-          class="ai-textarea"
-          rows="6"
-          placeholder="Paste an accounting note, email, or question here..."
-        ></textarea>
-
-        <div class="ai-row">
-          <label for="ai-mode" class="ai-label">Mode</label>
-          <select id="ai-mode" class="ai-select">
-            <option value="summary">Summarize this text</option>
-            <option value="explain">Explain this concept</option>
-          </select>
+    <div class="container">
+        <header class="header">
+            <h1>AI Accounting Assistant</h1>
+            <p>Intelligent analysis and explanations for your accounting needs</p>
+        </header>
+        
+        <div class="ai-card">
+            <form id="ai-form" class="ai-form">
+                <div class="form-group">
+                    <label for="ai-input" class="ai-label">Your text or question</label>
+                    <textarea
+                        id="ai-input"
+                        class="ai-textarea"
+                        placeholder="Enter your accounting text, question, or concept here..."
+                    ></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ai-mode" class="ai-label">Analysis Mode</label>
+                        <select id="ai-mode" class="ai-select">
+                            <option value="summary">📝 Summarize this text</option>
+                            <option value="explain">💡 Explain this concept</option>
+                        </select>
+                    </div>
+                    
+                    <button id="ai-submit" class="ai-button" type="submit">
+                        <span class="loading-spinner"></span>
+                        <span class="button-text">Ask AI</span>
+                    </button>
+                </div>
+                
+                <div id="ai-status" class="ai-status"></div>
+            </form>
+            
+            <div class="ai-result-wrapper">
+                <h3 class="ai-result-title">AI Response</h3>
+                <div id="ai-result" class="ai-result"></div>
+            </div>
         </div>
-
-        <button id="ai-submit" class="ai-button" type="submit">
-          Ask AI
-        </button>
-
-        <div id="ai-status" class="ai-status" data-type="idle"></div>
-      </form>
-
-      <div class="ai-result-wrapper">
-        <h3 class="ai-result-title">AI Response</h3>
-        <pre id="ai-result" class="ai-result"></pre>
-      </div>
-    </section>
+    </div>
     
-    <script type="module" src="/ai-assistant/js/apiClient.js"></script>
+    <script type="module" src="/ai-assistant/js/aiAssistant.js"></script>
 </body>
 </html>
