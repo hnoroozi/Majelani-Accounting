@@ -4,9 +4,9 @@
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 
 const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "https://www.majelaniaccounting.com",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS, GET",
+  "Access-Control-Allow-Headers": "Content-Type, Accept",
   "Access-Control-Max-Age": "86400",
 };
 
