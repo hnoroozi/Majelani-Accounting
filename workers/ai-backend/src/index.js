@@ -143,6 +143,9 @@ export default {
     if (cors) return cors;
 
     const url = new URL(request.url);
+    
+    // Debug logging
+    console.log(`Request: ${request.method} ${url.pathname}`);
 
     // Health check does NOT require OpenAI
     if (url.pathname === "/health" || url.pathname === "/") {
@@ -159,13 +162,20 @@ export default {
     }
 
     if (url.pathname === "/api/summary" && request.method === "POST") {
+      console.log("Handling summary request");
       return handleSummary(request, apiKey);
     }
 
     if (url.pathname === "/api/explain" && request.method === "POST") {
+      console.log("Handling explain request");
       return handleExplain(request, apiKey);
     }
 
-    return jsonResponse({ error: "Not Found" }, 404);
+    console.log(`No route found for: ${request.method} ${url.pathname}`);
+    return jsonResponse({ 
+      error: "Not Found", 
+      path: url.pathname, 
+      method: request.method 
+    }, 404);
   },
 };
