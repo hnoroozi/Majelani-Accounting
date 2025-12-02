@@ -92,6 +92,7 @@ export async function summarizeText(text) {
     throw new APIError('Text is required for summarization', 400);
   }
   
+  console.log('FIXED: Using /api/summary endpoint');
   const data = await callBackend('/api/summary', { text: text.trim() });
   return data.summary || 'No summary generated';
 }
@@ -106,6 +107,7 @@ export async function explainConcept(text) {
     throw new APIError('Text is required for explanation', 400);
   }
   
+  console.log('FIXED: Using /api/explain endpoint');
   const data = await callBackend('/api/explain', { text: text.trim() });
   return data.summary || 'No explanation generated';
 }

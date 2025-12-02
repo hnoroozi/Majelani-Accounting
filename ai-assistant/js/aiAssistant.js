@@ -1,7 +1,7 @@
 // ai-assistant/js/aiAssistant.js
 // Modern UI controller for Majelani Accounting AI Assistant
 
-import { summarizeText, explainConcept } from './apiClient-v2.js';
+import { summarizeText, explainConcept } from './apiClient.js?v=4';
 
 class AIAssistant {
   constructor() {
