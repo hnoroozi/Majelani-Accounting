@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #1a1a1a; color: white; }
+        textarea { width: 100%; height: 100px; margin: 10px 0; padding: 10px; }
+        button { padding: 10px 20px; background: #0066cc; color: white; border: none; cursor: pointer; }
+        #result { margin: 20px 0; padding: 20px; background: #333; border-radius: 5px; min-height: 50px; }
+    </style>
+</head>
+<body>
+    <h1>AI Test - Simple</h1>
+    
+    <textarea id="text" placeholder="Enter text here...">Hello, what is accounting?</textarea><br>
+    
+    <select id="mode">
+        <option value="summary">Summary</option>
+        <option value="explain">Explain</option>
+    </select><br><br>
+    
+    <button onclick="askAI()">Ask AI</button>
+    
+    <div id="result">Result will appear here...</div>
+
+    <script>
+        async function askAI() {
+            const text = document.getElementById('text').value;
+            const mode = document.getElementById('mode').value;
+            const result = document.getElementById('result');
+            
+            result.innerHTML = 'Loading...';
+            
+            try {
+                console.log('Calling API...');
+                const response = await fetch(`https://api.majelaniaccounting.com/api/${mode}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text })
+                });
+                
+                console.log('Response:', response.status);
+                const data = await response.json();
+                console.log('Data:', data);
+                
+                result.innerHTML = data.summary || 'No response';
+            } catch (error) {
+                console.error('Error:', error);
+                result.innerHTML = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
