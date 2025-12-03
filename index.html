@@ -1,390 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Majelani Accounting</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <style>
-    :root {
-      --bg: #050711;
-      --bg-card: #0c1020;
-      --accent: #27b0ff;
-      --accent-soft: rgba(39, 176, 255, 0.25);
-      --text-main: #f5f7ff;
-      --text-muted: #a4a9c3;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #111632 0, #050711 55%);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    header {
-      padding: 18px 6vw;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      backdrop-filter: blur(14px);
-      background: linear-gradient(to bottom, rgba(5, 7, 17, 0.9), transparent);
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      font-size: 13px;
-    }
-
-    .logo-mark {
-      width: 28px;
-      height: 28px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 20%, #78e6ff, #1e6fff 55%, #050711 90%);
-      box-shadow: 0 0 20px rgba(39, 176, 255, 0.7);
-    }
-
-    nav {
-      display: flex;
-      gap: 22px;
-      font-size: 14px;
-    }
-
-    nav a {
-      color: var(--text-muted);
-      text-decoration: none;
-      position: relative;
-      padding-bottom: 3px;
-    }
-
-    nav a:hover {
-      color: var(--text-main);
-    }
-
-    nav a::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 0;
-      height: 2px;
-      background: linear-gradient(90deg, #27b0ff, #7cf5ff);
-      transition: width 0.2s ease-out;
-    }
-
-    nav a:hover::after {
-      width: 100%;
-    }
-
-    /* ---------- Hero & Copilot ---------- */
-
-    .hero {
-      flex: 1;
-      display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-      gap: 40px;
-      padding: 30px 6vw 70px;
-      align-items: center;
-    }
-
-    @media (max-width: 880px) {
-      .hero {
-        grid-template-columns: minmax(0, 1fr);
-        padding-top: 16px;
-      }
-    }
-
-    .hero-title {
-      font-size: clamp(28px, 5vw, 40px);
-      font-weight: 650;
-      line-height: 1.15;
-      margin-bottom: 16px;
-    }
-
-    .hero-title span {
-      background: linear-gradient(120deg, #27b0ff, #7cf5ff);
-      -webkit-background-clip: text;
-      color: transparent;
-    }
-
-    .hero-subtitle {
-      color: var(--text-muted);
-      font-size: 15px;
-      max-width: 430px;
-      line-height: 1.6;
-      margin-bottom: 26px;
-    }
-
-    .hero-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 22px;
-    }
-
-    .badge {
-      font-size: 11px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(124, 245, 255, 0.35);
-      background: radial-gradient(circle at top, rgba(124, 245, 255, 0.16), transparent);
-      color: #d7f7ff;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .btn-primary,
-    .btn-ghost {
-      font-size: 13px;
-      padding: 10px 18px;
-      border-radius: 999px;
-      border: 1px solid transparent;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-primary {
-      background: linear-gradient(120deg, #27b0ff, #7cf5ff);
-      color: #021018;
-      font-weight: 600;
-      box-shadow: 0 0 18px rgba(39, 176, 255, 0.6);
-    }
-
-    .btn-primary span.chevron {
-      font-size: 14px;
-      transform: translateY(1px);
-    }
-
-    .btn-ghost {
-      border-color: rgba(124, 245, 255, 0.4);
-      color: #d7f7ff;
-      background: radial-gradient(circle at top, rgba(124, 245, 255, 0.12), transparent);
-    }
-
-    .btn-ghost:hover {
-      border-color: #7cf5ff;
-    }
-
-    .hero-meta {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 16px;
-    }
-
-    .hero-right {
-      position: relative;
-    }
-
-    .glass-panel {
-      position: relative;
-      border-radius: 20px;
-      padding: 18px 18px 16px;
-      background: linear-gradient(135deg, rgba(19, 26, 58, 0.95), rgba(11, 19, 38, 0.98));
-      box-shadow:
-        0 0 0 1px rgba(124, 245, 255, 0.08),
-        0 24px 60px rgba(0, 0, 0, 0.9);
-      overflow: hidden;
-    }
-
-    .glass-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: #3ff5a8;
-      box-shadow: 0 0 10px rgba(63, 245, 168, 0.9);
-    }
-
-    .ai-input-block {
-      border-radius: 14px;
-      padding: 10px 11px;
-      border: 1px solid rgba(124, 245, 255, 0.35);
-      background: radial-gradient(circle at top left, rgba(39, 176, 255, 0.35), rgba(1, 6, 12, 0.98));
-      font-size: 11px;
-      color: #e9f7ff;
-      margin-bottom: 12px;
-    }
-
-    .ai-input-label {
-      font-size: 10px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    .ai-input-text {
-      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      white-space: pre-wrap;
-    }
-
-    .ai-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 12px;
-    }
-
-    .ai-tag {
-      padding: 4px 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(124, 245, 255, 0.3);
-      font-size: 9px;
-      color: #cdefff;
-    }
-
-    .ai-summary {
-      font-size: 11px;
-      color: var(--text-main);
-      background: radial-gradient(circle at top, rgba(1, 255, 177, 0.15), transparent);
-      border-radius: 12px;
-      padding: 10px;
-      border: 1px solid rgba(63, 245, 168, 0.5);
-    }
-
-    .ai-summary-title {
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #9fffd4;
-      margin-bottom: 4px;
-    }
-
-    .ai-summary ul {
-      margin-left: 16px;
-    }
-
-    .ai-summary li {
-      margin-bottom: 3px;
-    }
-
-    footer {
-      padding: 16px 6vw 18px;
-      border-top: 1px solid rgba(38, 52, 102, 0.9);
-      font-size: 11px;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      flex-wrap: wrap;
-      background: radial-gradient(circle at bottom, #0c1020 0, #050711 55%);
-    }
-  </style>
+    <title>🤖 Majelani AI Assistant</title>
+    <meta charset="UTF-8">
 </head>
-<body>
-  <header>
-    <div class="logo">
-      <div class="logo-mark"></div>
-      <span>Majelani Accounting</span>
+<body style="padding:20px; background:#1a1a1a; color:white; font-family:Arial; min-height:100vh;">
+    <h1 style="text-align:center; color:#22d3ee;">🤖 Majelani AI Assistant</h1>
+    
+    <div style="max-width:800px; margin:0 auto; background:#2a2a2a; padding:30px; border-radius:15px;">
+        <textarea id="text" style="width:100%; height:120px; padding:15px; background:#333; color:white; border:2px solid #444; border-radius:10px; font-size:16px;" placeholder="Enter your question...">What is accounting?</textarea>
+        
+        <select id="mode" style="width:100%; padding:15px; background:#333; color:white; border:2px solid #444; border-radius:10px; margin:15px 0; font-size:16px;">
+            <option value="summary">📝 Summarize this text</option>
+            <option value="explain">💡 Explain this concept</option>
+        </select>
+        
+        <button onclick="askAI()" style="width:100%; padding:15px; background:linear-gradient(135deg, #22d3ee, #3b82f6); color:#020617; border:none; border-radius:10px; font-size:18px; font-weight:bold; cursor:pointer;">Ask AI Assistant</button>
+        
+        <div id="status" style="margin:15px 0; padding:10px; text-align:center; font-weight:bold; display:none;"></div>
+        
+        <div id="result" style="margin:20px 0; padding:20px; background:#333; border-radius:10px; min-height:100px; white-space:pre-wrap; line-height:1.6; border:2px solid #444;">Response will appear here...</div>
     </div>
-    <nav>
-      <a href="#features">Features</a>
-      <a href="/ai-assistant/">AI Assistant</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </header>
 
-  <main class="hero">
-    <section id="features">
-      <h1 class="hero-title">
-        Modular & <span>AI-Powered</span> Accounting Platform
-      </h1>
-      <p class="hero-subtitle">
-        Majelani Accounting is a next-generation accounting environment built around plugins,
-        automation, and intelligent assistants — designed for businesses that want clarity,
-        speed, and control.
-      </p>
-
-      <div class="hero-badges">
-        <span class="badge">Plugin-based architecture</span>
-        <span class="badge">AI analysis & summaries</span>
-        <span class="badge">Cloud ready</span>
-      </div>
-
-      <div class="hero-actions">
-        <a href="/ai-assistant/" class="btn-primary">
-          <span>Try AI Assistant</span>
-          <span class="chevron">›</span>
-        </a>
-        <a href="#features" class="btn-ghost">Explore features</a>
-      </div>
-
-      <p class="hero-meta">
-        Phase 1: Website & AI Assistant. Platform plugins, dashboards, and full accounting features are in active development.
-      </p>
-    </section>
-
-    <section class="hero-right" id="ai">
-      <div class="glass-panel">
-        <div class="glass-header">
-          <span>Majelani AI Copilot • Live</span>
-          <span class="status-dot"></span>
-        </div>
-
-        <div class="ai-input-block">
-          <div class="ai-input-label">Prompt</div>
-          <div class="ai-input-text">
-Summarize all unpaid invoices,
-forecast cash-flow for the next 30 days,
-and highlight the three highest-risk customers.
-          </div>
-        </div>
-
-        <div class="ai-tags">
-          <span class="ai-tag">Accounts Receivable</span>
-          <span class="ai-tag">Risk Scoring</span>
-          <span class="ai-tag">Cash-flow Forecast</span>
-        </div>
-
-        <div class="ai-summary">
-          <div class="ai-summary-title">AI Summary – Live Demo</div>
-          <ul>
-            <li>Unpaid invoices: 37 (total: $128,900)</li>
-            <li>Projected 30-day cash-in: $92,500</li>
-            <li>High-risk customers: 3 (late > 60 days)</li>
-            <li>Suggested actions: payment plans + reminder sequences</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer id="contact">
-    <span>© <span id="year"></span> Majelani Accounting. All rights reserved.</span>
-    <span>Contact: info@majelaniaccounting.com</span>
-  </footer>
-
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+    <script>
+        async function askAI() {
+            const text = document.getElementById('text').value.trim();
+            const mode = document.getElementById('mode').value;
+            const result = document.getElementById('result');
+            const status = document.getElementById('status');
+            const button = document.querySelector('button');
+            
+            if (!text) {
+                status.style.display = 'block';
+                status.style.color = '#ef4444';
+                status.textContent = '⚠️ Please enter some text first';
+                return;
+            }
+            
+            button.disabled = true;
+            button.textContent = 'Processing...';
+            status.style.display = 'block';
+            status.style.color = '#3b82f6';
+            status.textContent = '⏳ Analyzing your request...';
+            result.textContent = 'Processing...';
+            
+            try {
+                const response = await fetch(`https://api.majelaniaccounting.com/api/${mode}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ text: text })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const aiResponse = data.summary || 'No response received';
+                result.textContent = aiResponse;
+                
+                const isPersian = /[\u0600-\u06FF]/.test(aiResponse);
+                result.style.direction = isPersian ? 'rtl' : 'ltr';
+                result.style.textAlign = isPersian ? 'right' : 'left';
+                result.style.fontFamily = isPersian ? 'Tahoma, Arial, sans-serif' : 'Arial, sans-serif';
+                
+                status.style.color = '#22c55e';
+                status.textContent = '✅ Analysis completed successfully!';
+                
+            } catch (error) {
+                status.style.color = '#ef4444';
+                status.textContent = '❌ Error: ' + error.message;
+                result.textContent = 'Error occurred. Please try again.';
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Ask AI Assistant';
+            }
+        }
+    </script>
 </body>
 </html>
