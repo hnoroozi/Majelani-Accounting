@@ -1,11 +1,11 @@
 name: Deploy Cloudflare Pages
 
 on:
-  push:
-    branches: [ "main" ]
-    paths-ignore:
-      - "workers/**"
-      - "backend/**"
+  # push:
+  #   branches: [ "main" ]
+  #   paths-ignore:
+  #     - "workers/**"
+  #     - "backend/**"
   workflow_dispatch:
 
 jobs:
