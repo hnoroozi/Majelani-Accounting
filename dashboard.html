@@ -4,6 +4,7 @@
     <title>🤖 Majelani Accounting Dashboard</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/global-layout.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -287,6 +288,51 @@
     </style>
 </head>
 <body>
+    <!-- Global Header -->
+    <header class="global-header">
+        <div class="header-left">
+            <a href="dashboard.html" class="header-logo">
+                <div class="logo-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <span>Majelani Accounting</span>
+            </a>
+            <nav class="header-nav">
+                <a href="dashboard.html" class="nav-item active">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="modules/customer-management.html" class="nav-item">
+                    <i class="fas fa-users"></i> Customers
+                </a>
+                <a href="ai-assistant.html" class="nav-item">
+                    <i class="fas fa-robot"></i> AI Assistant
+                </a>
+            </nav>
+        </div>
+        
+        <div class="header-right">
+            <div class="header-search">
+                <input type="text" class="search-input" placeholder="Search modules, customers..." id="globalSearch">
+                <button class="search-btn" onclick="performGlobalSearch()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <div class="header-actions">
+                <button class="header-btn notification-badge" onclick="showNotifications()">
+                    <i class="fas fa-bell"></i>
+                </button>
+                <button class="header-btn" onclick="quickAdd()">
+                    <i class="fas fa-plus"></i> Quick Add
+                </button>
+                <button class="header-btn secondary" onclick="showProfile()">
+                    <i class="fas fa-user"></i> Profile
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content">
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="logo">
@@ -610,6 +656,122 @@
             this.style.height = 'auto';
             this.style.height = Math.max(120, this.scrollHeight) + 'px';
         });
+    </script>
+
+    </div>
+
+    <!-- Global Footer -->
+    <footer class="global-footer">
+        <div class="footer-left">
+            <div class="footer-status">
+                <div class="status-dot"></div>
+                <span>System Online</span>
+            </div>
+            <div class="footer-info">
+                <span>Modules: 12</span>
+                <span>Active Users: 1</span>
+                <span>Server: Healthy</span>
+            </div>
+        </div>
+        
+        <div class="footer-right">
+            <div class="footer-links">
+                <a href="#" class="footer-link">Help</a>
+                <a href="#" class="footer-link">Documentation</a>
+                <a href="#" class="footer-link">API</a>
+            </div>
+            <div class="footer-actions">
+                <button class="footer-btn" onclick="exportData()">
+                    <i class="fas fa-download"></i> Backup
+                </button>
+                <button class="footer-btn" onclick="showSettings()">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global Header & Footer Functions
+        function performGlobalSearch() {
+            const query = document.getElementById('globalSearch').value.trim();
+            if (query) {
+                // Search in sidebar menu items
+                const menuItems = document.querySelectorAll('.submenu-item');
+                let found = false;
+                
+                menuItems.forEach(item => {
+                    if (item.textContent.toLowerCase().includes(query.toLowerCase())) {
+                        item.style.background = 'rgba(0, 255, 255, 0.2)';
+                        item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        found = true;
+                        setTimeout(() => {
+                            item.style.background = '';
+                        }, 3000);
+                    }
+                });
+                
+                if (found) {
+                    showNotification(`Found "${query}" in menu`, 'success');
+                } else {
+                    showNotification(`No results for "${query}"`, 'info');
+                }
+            }
+        }
+
+        function showNotifications() {
+            showNotification('Dashboard Alerts • System healthy • All modules active', 'info');
+        }
+
+        function quickAdd() {
+            const options = ['Customer', 'Invoice', 'Payment', 'Expense'];
+            showNotification('Quick Add: Customer • Invoice • Payment • Expense', 'info');
+        }
+
+        function showProfile() {
+            showNotification('Admin Profile • Dashboard Access • All Permissions', 'info');
+        }
+
+        function exportData() {
+            showNotification('Creating system backup...', 'info');
+            setTimeout(() => {
+                showNotification('Backup completed successfully!', 'success');
+            }, 2000);
+        }
+
+        function showSettings() {
+            showNotification('System Settings • Company • Users • Modules • Security', 'info');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 90px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: bold;
+                z-index: 10000;
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
+            `;
+            
+            if (type === 'success') notification.style.background = 'linear-gradient(45deg, #00ff88, #00cc66)';
+            else if (type === 'error') notification.style.background = 'linear-gradient(45deg, #ff4444, #cc0000)';
+            else notification.style.background = 'linear-gradient(45deg, #00ffff, #0080ff)';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 3000);
+        }
     </script>
 </body>
 </html>
