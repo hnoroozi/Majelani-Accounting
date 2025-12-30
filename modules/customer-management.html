@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Customer Management - Majelani Accounting</title>
+    <title>Customer Management Pro - Majelani Accounting</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -21,6 +22,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .header h1 {
@@ -28,7 +31,13 @@
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
         }
 
-        .back-btn {
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .back-btn, .export-btn, .import-btn {
             background: linear-gradient(45deg, #00ffff, #0080ff);
             border: none;
             padding: 10px 20px;
@@ -40,61 +49,107 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 14px;
         }
 
+        .export-btn { background: linear-gradient(45deg, #00ff88, #00cc66); }
+        .import-btn { background: linear-gradient(45deg, #ffaa00, #ff8800); }
+
         .container {
-            padding: 30px;
-            max-width: 1400px;
+            padding: 20px;
+            max-width: 1600px;
             margin: 0 auto;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: none;
+            color: #888;
+            cursor: pointer;
+            border-radius: 10px 10px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(0, 128, 255, 0.2));
+            color: #00ffff;
+            border-bottom: 2px solid #00ffff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         .controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
             gap: 15px;
         }
 
-        .search-box {
+        .search-filters {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-box, .filter-select {
             background: rgba(0, 0, 0, 0.5);
             border: 2px solid rgba(0, 255, 255, 0.3);
-            border-radius: 10px;
-            padding: 12px 15px;
+            border-radius: 8px;
+            padding: 10px 12px;
             color: white;
-            width: 300px;
             font-size: 14px;
         }
 
-        .search-box:focus {
+        .search-box { width: 250px; }
+        .filter-select { width: 150px; }
+
+        .search-box:focus, .filter-select:focus {
             outline: none;
             border-color: #00ffff;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
         }
 
-        .add-btn {
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .add-btn, .bulk-btn {
             background: linear-gradient(45deg, #00ff88, #00ffff);
             border: none;
-            padding: 12px 25px;
-            border-radius: 10px;
+            padding: 10px 20px;
+            border-radius: 8px;
             color: #000;
             cursor: pointer;
             font-weight: bold;
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.3s ease;
+            font-size: 14px;
         }
 
-        .add-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
-        }
+        .bulk-btn { background: linear-gradient(45deg, #ff6b6b, #ee5a52); color: white; }
 
         .customers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -105,11 +160,23 @@
             border-radius: 15px;
             padding: 20px;
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .customer-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
+        }
+
+        .customer-card.selected {
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .card-checkbox {
+            position: absolute;
+            top: 15px;
+            right: 15px;
         }
 
         .customer-header {
@@ -134,11 +201,12 @@
 
         .status-active { background: rgba(0, 255, 0, 0.2); color: #00ff00; }
         .status-inactive { background: rgba(255, 0, 0, 0.2); color: #ff4444; }
+        .status-vip { background: rgba(255, 215, 0, 0.2); color: #ffd700; }
 
         .customer-info {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 15px;
         }
 
@@ -146,44 +214,58 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 14px;
+            font-size: 13px;
             color: #b0b0b0;
         }
 
         .info-icon {
             color: #00ffff;
-            width: 16px;
+            width: 14px;
         }
+
+        .customer-financial {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+
+        .financial-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .financial-label { color: #888; }
+        .financial-value { color: #00ffff; font-weight: bold; }
+        .financial-value.negative { color: #ff4444; }
+        .financial-value.positive { color: #00ff88; }
 
         .customer-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             justify-content: flex-end;
+            flex-wrap: wrap;
         }
 
         .action-btn {
-            padding: 8px 12px;
+            padding: 6px 10px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .edit-btn {
-            background: linear-gradient(45deg, #ffaa00, #ff8800);
-            color: #000;
-        }
-
-        .delete-btn {
-            background: linear-gradient(45deg, #ff4444, #cc0000);
-            color: white;
-        }
-
-        .view-btn {
-            background: linear-gradient(45deg, #00ffff, #0080ff);
-            color: #000;
-        }
+        .edit-btn { background: linear-gradient(45deg, #ffaa00, #ff8800); color: #000; }
+        .delete-btn { background: linear-gradient(45deg, #ff4444, #cc0000); color: white; }
+        .view-btn { background: linear-gradient(45deg, #00ffff, #0080ff); color: #000; }
+        .email-btn { background: linear-gradient(45deg, #4CAF50, #45a049); color: white; }
+        .files-btn { background: linear-gradient(45deg, #9C27B0, #7B1FA2); color: white; }
 
         .modal {
             display: none;
@@ -194,45 +276,53 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.8);
             z-index: 1000;
+            overflow-y: auto;
         }
 
         .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            position: relative;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             border: 2px solid #00ffff;
             border-radius: 15px;
             padding: 30px;
             width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
+            max-width: 800px;
+            margin: 50px auto;
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .modal-title {
             color: #00ffff;
-            font-size: 20px;
+            font-size: 22px;
         }
 
         .close-btn {
             background: none;
             border: none;
             color: #ff4444;
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
         }
 
         .form-group {
             margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
         }
 
         .form-label {
@@ -240,6 +330,7 @@
             color: #00ffff;
             margin-bottom: 8px;
             font-weight: bold;
+            font-size: 14px;
         }
 
         .form-input, .form-select, .form-textarea {
@@ -263,10 +354,39 @@
             min-height: 80px;
         }
 
+        .file-upload {
+            border: 2px dashed rgba(0, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: #00ffff;
+            background: rgba(0, 255, 255, 0.05);
+        }
+
+        .file-list {
+            margin-top: 15px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
         .form-actions {
             display: flex;
             gap: 15px;
             justify-content: flex-end;
+            margin-top: 30px;
         }
 
         .save-btn {
@@ -289,6 +409,105 @@
             font-weight: bold;
         }
 
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .analytics-card {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(0, 128, 255, 0.1));
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .analytics-title {
+            color: #00ffff;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .communication-log {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .comm-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 3px solid #00ffff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .comm-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .comm-type {
+            background: rgba(0, 255, 255, 0.2);
+            color: #00ffff;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+
+        .comm-date {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .reminder-item {
+            background: rgba(255, 165, 0, 0.1);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .reminder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .reminder-title {
+            color: #ffaa00;
+            font-weight: bold;
+        }
+
+        .reminder-due {
+            color: #ff6b6b;
+            font-size: 12px;
+        }
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -300,84 +519,375 @@
             color: #333;
             margin-bottom: 20px;
         }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 2000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success { background: linear-gradient(45deg, #00ff88, #00cc66); }
+        .notification.error { background: linear-gradient(45deg, #ff4444, #cc0000); }
+        .notification.info { background: linear-gradient(45deg, #00ffff, #0080ff); }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .customers-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1><i class="fas fa-users"></i> Customer Management</h1>
-        <a href="../dashboard.html" class="back-btn">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </a>
+        <h1><i class="fas fa-users"></i> Customer Management Pro</h1>
+        <div class="header-actions">
+            <button class="export-btn" onclick="exportData()">
+                <i class="fas fa-download"></i> Export
+            </button>
+            <button class="import-btn" onclick="document.getElementById('importFile').click()">
+                <i class="fas fa-upload"></i> Import
+            </button>
+            <a href="../dashboard.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Dashboard
+            </a>
+        </div>
     </div>
 
+    <input type="file" id="importFile" accept=".csv,.xlsx" style="display: none;" onchange="importData(this)">
+
     <div class="container">
-        <div class="controls">
-            <input type="text" class="search-box" id="searchBox" placeholder="Search customers...">
-            <button class="add-btn" onclick="openAddModal()">
-                <i class="fas fa-plus"></i> Add Customer
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('customers')">
+                <i class="fas fa-users"></i> Customers
+            </button>
+            <button class="tab" onclick="switchTab('analytics')">
+                <i class="fas fa-chart-bar"></i> Analytics
+            </button>
+            <button class="tab" onclick="switchTab('communications')">
+                <i class="fas fa-comments"></i> Communications
+            </button>
+            <button class="tab" onclick="switchTab('reminders')">
+                <i class="fas fa-bell"></i> Reminders
             </button>
         </div>
 
-        <div class="customers-grid" id="customersGrid">
-            <!-- Customers will be loaded here -->
+        <!-- Customers Tab -->
+        <div class="tab-content active" id="customers-tab">
+            <div class="controls">
+                <div class="search-filters">
+                    <input type="text" class="search-box" id="searchBox" placeholder="Search customers...">
+                    <select class="filter-select" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="vip">VIP</option>
+                    </select>
+                    <select class="filter-select" id="segmentFilter">
+                        <option value="">All Segments</option>
+                        <option value="high-value">High Value</option>
+                        <option value="regular">Regular</option>
+                        <option value="new">New</option>
+                    </select>
+                </div>
+                <div class="action-buttons">
+                    <button class="bulk-btn" onclick="toggleBulkMode()" id="bulkBtn">
+                        <i class="fas fa-check-square"></i> Bulk Actions
+                    </button>
+                    <button class="add-btn" onclick="openAddModal()">
+                        <i class="fas fa-plus"></i> Add Customer
+                    </button>
+                </div>
+            </div>
+
+            <div class="customers-grid" id="customersGrid">
+                <!-- Customers will be loaded here -->
+            </div>
+
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>No customers found</h3>
+                <p>Add your first customer to get started</p>
+            </div>
         </div>
 
-        <div class="empty-state" id="emptyState" style="display: none;">
-            <div class="empty-icon">
-                <i class="fas fa-users"></i>
+        <!-- Analytics Tab -->
+        <div class="tab-content" id="analytics-tab">
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <div class="analytics-title">
+                        <i class="fas fa-users"></i> Total Customers
+                    </div>
+                    <div class="stat-number" id="totalCustomers">0</div>
+                    <div class="stat-label">Active customers in system</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-title">
+                        <i class="fas fa-dollar-sign"></i> Total Revenue
+                    </div>
+                    <div class="stat-number" id="totalRevenue">$0</div>
+                    <div class="stat-label">From all customers</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-title">
+                        <i class="fas fa-star"></i> VIP Customers
+                    </div>
+                    <div class="stat-number" id="vipCustomers">0</div>
+                    <div class="stat-label">High-value customers</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-title">
+                        <i class="fas fa-exclamation-triangle"></i> Overdue
+                    </div>
+                    <div class="stat-number" id="overdueCustomers">0</div>
+                    <div class="stat-label">Customers with overdue payments</div>
+                </div>
             </div>
-            <h3>No customers found</h3>
-            <p>Add your first customer to get started</p>
+            
+            <div class="analytics-card">
+                <div class="analytics-title">
+                    <i class="fas fa-chart-line"></i> Customer Growth
+                </div>
+                <div class="chart-container">
+                    <canvas id="growthChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Communications Tab -->
+        <div class="tab-content" id="communications-tab">
+            <div class="controls">
+                <button class="add-btn" onclick="openCommModal()">
+                    <i class="fas fa-plus"></i> New Communication
+                </button>
+            </div>
+            <div class="communication-log" id="communicationLog">
+                <!-- Communications will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Reminders Tab -->
+        <div class="tab-content" id="reminders-tab">
+            <div class="controls">
+                <button class="add-btn" onclick="openReminderModal()">
+                    <i class="fas fa-plus"></i> New Reminder
+                </button>
+            </div>
+            <div id="remindersList">
+                <!-- Reminders will be loaded here -->
+            </div>
         </div>
     </div>
 
-    <!-- Add/Edit Customer Modal -->
+    <!-- Customer Modal -->
     <div class="modal" id="customerModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="modalTitle">Add Customer</h3>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
+                <button class="close-btn" onclick="closeModal('customerModal')">&times;</button>
             </div>
             <form id="customerForm">
-                <div class="form-group">
-                    <label class="form-label">Customer Name *</label>
-                    <input type="text" class="form-input" id="customerName" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" class="form-input" id="customerEmail">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Phone</label>
-                    <input type="tel" class="form-input" id="customerPhone">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Company</label>
-                    <input type="text" class="form-input" id="customerCompany">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Address</label>
-                    <textarea class="form-textarea" id="customerAddress"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Status</label>
-                    <select class="form-select" id="customerStatus">
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                    </select>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Customer Name *</label>
+                        <input type="text" class="form-input" id="customerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="customerEmail">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-input" id="customerPhone">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Company</label>
+                        <input type="text" class="form-input" id="customerCompany">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="customerStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="vip">VIP</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Credit Limit</label>
+                        <input type="number" class="form-input" id="creditLimit" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Payment Terms (Days)</label>
+                        <input type="number" class="form-input" id="paymentTerms" value="30">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tax ID</label>
+                        <input type="text" class="form-input" id="taxId">
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Address</label>
+                        <textarea class="form-textarea" id="customerAddress"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-textarea" id="customerNotes"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Upload Files</label>
+                        <div class="file-upload" onclick="document.getElementById('customerFiles').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Click to upload files or drag and drop</p>
+                        </div>
+                        <input type="file" id="customerFiles" multiple style="display: none;" onchange="handleFileUpload(this)">
+                        <div class="file-list" id="fileList"></div>
+                    </div>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
+                    <button type="button" class="cancel-btn" onclick="closeModal('customerModal')">Cancel</button>
                     <button type="submit" class="save-btn">Save Customer</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script>
-        let customers = JSON.parse(localStorage.getItem('customers')) || [];
-        let editingId = null;
+    <!-- Communication Modal -->
+    <div class="modal" id="commModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">New Communication</h3>
+                <button class="close-btn" onclick="closeModal('commModal')">&times;</button>
+            </div>
+            <form id="commForm">
+                <div class="form-group">
+                    <label class="form-label">Customer</label>
+                    <select class="form-select" id="commCustomer" required>
+                        <option value="">Select Customer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <select class="form-select" id="commType" required>
+                        <option value="email">Email</option>
+                        <option value="phone">Phone Call</option>
+                        <option value="meeting">Meeting</option>
+                        <option value="sms">SMS</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Subject</label>
+                    <input type="text" class="form-input" id="commSubject" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message</label>
+                    <textarea class="form-textarea" id="commMessage" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="closeModal('commModal')">Cancel</button>
+                    <button type="submit" class="save-btn">Send & Log</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
+    <!-- Reminder Modal -->
+    <div class="modal" id="reminderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">New Reminder</h3>
+                <button class="close-btn" onclick="closeModal('reminderModal')">&times;</button>
+            </div>
+            <form id="reminderForm">
+                <div class="form-group">
+                    <label class="form-label">Customer</label>
+                    <select class="form-select" id="reminderCustomer" required>
+                        <option value="">Select Customer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <select class="form-select" id="reminderType" required>
+                        <option value="follow-up">Follow-up</option>
+                        <option value="payment">Payment Due</option>
+                        <option value="birthday">Birthday</option>
+                        <option value="contract">Contract Renewal</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" class="form-input" id="reminderTitle" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Due Date</label>
+                    <input type="datetime-local" class="form-input" id="reminderDate" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="reminderDescription"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="closeModal('reminderModal')">Cancel</button>
+                    <button type="submit" class="save-btn">Create Reminder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data Storage
+        let customers = JSON.parse(localStorage.getItem('customers')) || [];
+        let communications = JSON.parse(localStorage.getItem('communications')) || [];
+        let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+        let customerFiles = JSON.parse(localStorage.getItem('customerFiles')) || {};
+        
+        let editingId = null;
+        let bulkMode = false;
+        let selectedCustomers = new Set();
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCustomers();
+            loadAnalytics();
+            loadCommunications();
+            loadReminders();
+            populateCustomerSelects();
+            checkReminders();
+        });
+
+        // Tab Management
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            if (tabName === 'analytics') {
+                setTimeout(loadAnalytics, 100);
+            }
+        }
+
+        // Customer Management
         function loadCustomers() {
             const grid = document.getElementById('customersGrid');
             const emptyState = document.getElementById('emptyState');
@@ -391,127 +901,14 @@
             grid.style.display = 'grid';
             emptyState.style.display = 'none';
             
-            grid.innerHTML = customers.map(customer => `
-                <div class="customer-card">
-                    <div class="customer-header">
-                        <div class="customer-name">${customer.name}</div>
-                        <div class="customer-status status-${customer.status}">${customer.status.toUpperCase()}</div>
-                    </div>
-                    <div class="customer-info">
-                        <div class="info-item">
-                            <i class="fas fa-envelope info-icon"></i>
-                            <span>${customer.email || 'No email'}</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-phone info-icon"></i>
-                            <span>${customer.phone || 'No phone'}</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-building info-icon"></i>
-                            <span>${customer.company || 'No company'}</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-calendar info-icon"></i>
-                            <span>${new Date(customer.createdAt).toLocaleDateString()}</span>
-                        </div>
-                    </div>
-                    <div class="customer-actions">
-                        <button class="action-btn view-btn" onclick="viewCustomer(${customer.id})">
-                            <i class="fas fa-eye"></i> View
-                        </button>
-                        <button class="action-btn edit-btn" onclick="editCustomer(${customer.id})">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button class="action-btn delete-btn" onclick="deleteCustomer(${customer.id})">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function openAddModal() {
-            document.getElementById('modalTitle').textContent = 'Add Customer';
-            document.getElementById('customerForm').reset();
-            editingId = null;
-            document.getElementById('customerModal').style.display = 'block';
-        }
-
-        function editCustomer(id) {
-            const customer = customers.find(c => c.id === id);
-            if (!customer) return;
-            
-            document.getElementById('modalTitle').textContent = 'Edit Customer';
-            document.getElementById('customerName').value = customer.name;
-            document.getElementById('customerEmail').value = customer.email || '';
-            document.getElementById('customerPhone').value = customer.phone || '';
-            document.getElementById('customerCompany').value = customer.company || '';
-            document.getElementById('customerAddress').value = customer.address || '';
-            document.getElementById('customerStatus').value = customer.status;
-            
-            editingId = id;
-            document.getElementById('customerModal').style.display = 'block';
-        }
-
-        function deleteCustomer(id) {
-            if (confirm('Are you sure you want to delete this customer?')) {
-                customers = customers.filter(c => c.id !== id);
-                localStorage.setItem('customers', JSON.stringify(customers));
-                loadCustomers();
-            }
-        }
-
-        function viewCustomer(id) {
-            const customer = customers.find(c => c.id === id);
-            if (!customer) return;
-            
-            alert(`Customer Details:\n\nName: ${customer.name}\nEmail: ${customer.email || 'N/A'}\nPhone: ${customer.phone || 'N/A'}\nCompany: ${customer.company || 'N/A'}\nAddress: ${customer.address || 'N/A'}\nStatus: ${customer.status}\nCreated: ${new Date(customer.createdAt).toLocaleString()}`);
-        }
-
-        function closeModal() {
-            document.getElementById('customerModal').style.display = 'none';
-        }
-
-        document.getElementById('customerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const customerData = {
-                name: document.getElementById('customerName').value,
-                email: document.getElementById('customerEmail').value,
-                phone: document.getElementById('customerPhone').value,
-                company: document.getElementById('customerCompany').value,
-                address: document.getElementById('customerAddress').value,
-                status: document.getElementById('customerStatus').value
-            };
-            
-            if (editingId) {
-                const index = customers.findIndex(c => c.id === editingId);
-                customers[index] = { ...customers[index], ...customerData };
-            } else {
-                customerData.id = Date.now();
-                customerData.createdAt = new Date().toISOString();
-                customers.push(customerData);
-            }
-            
-            localStorage.setItem('customers', JSON.stringify(customers));
-            loadCustomers();
-            closeModal();
-        });
-
-        document.getElementById('searchBox').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredCustomers = customers.filter(customer => 
-                customer.name.toLowerCase().includes(searchTerm) ||
-                (customer.email && customer.email.toLowerCase().includes(searchTerm)) ||
-                (customer.company && customer.company.toLowerCase().includes(searchTerm))
-            );
-            
-            const grid = document.getElementById('customersGrid');
-            if (filteredCustomers.length === 0) {
-                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px;">No customers match your search</div>';
-            } else {
-                grid.innerHTML = filteredCustomers.map(customer => `
-                    <div class="customer-card">
+            grid.innerHTML = customers.map(customer => {
+                const balance = customer.balance || 0;
+                const creditUsed = customer.creditUsed || 0;
+                const creditLimit = customer.creditLimit || 0;
+                
+                return `
+                    <div class="customer-card ${selectedCustomers.has(customer.id) ? 'selected' : ''}" data-id="${customer.id}">
+                        ${bulkMode ? `<input type="checkbox" class="card-checkbox" ${selectedCustomers.has(customer.id) ? 'checked' : ''} onchange="toggleCustomerSelection(${customer.id})">` : ''}
                         <div class="customer-header">
                             <div class="customer-name">${customer.name}</div>
                             <div class="customer-status status-${customer.status}">${customer.status.toUpperCase()}</div>
@@ -534,24 +931,536 @@
                                 <span>${new Date(customer.createdAt).toLocaleDateString()}</span>
                             </div>
                         </div>
+                        <div class="customer-financial">
+                            <div class="financial-item">
+                                <span class="financial-label">Balance:</span>
+                                <span class="financial-value ${balance >= 0 ? 'positive' : 'negative'}">$${Math.abs(balance).toFixed(2)}</span>
+                            </div>
+                            <div class="financial-item">
+                                <span class="financial-label">Credit Used:</span>
+                                <span class="financial-value">$${creditUsed.toFixed(2)} / $${creditLimit.toFixed(2)}</span>
+                            </div>
+                            <div class="financial-item">
+                                <span class="financial-label">Payment Terms:</span>
+                                <span class="financial-value">${customer.paymentTerms || 30} days</span>
+                            </div>
+                        </div>
                         <div class="customer-actions">
                             <button class="action-btn view-btn" onclick="viewCustomer(${customer.id})">
-                                <i class="fas fa-eye"></i> View
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn files-btn" onclick="viewFiles(${customer.id})">
+                                <i class="fas fa-folder"></i>
+                            </button>
+                            <button class="action-btn email-btn" onclick="emailCustomer(${customer.id})">
+                                <i class="fas fa-envelope"></i>
                             </button>
                             <button class="action-btn edit-btn" onclick="editCustomer(${customer.id})">
-                                <i class="fas fa-edit"></i> Edit
+                                <i class="fas fa-edit"></i>
                             </button>
                             <button class="action-btn delete-btn" onclick="deleteCustomer(${customer.id})">
-                                <i class="fas fa-trash"></i> Delete
+                                <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </div>
-                `).join('');
+                `;
+            }).join('');
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add Customer';
+            document.getElementById('customerForm').reset();
+            document.getElementById('fileList').innerHTML = '';
+            editingId = null;
+            document.getElementById('customerModal').style.display = 'block';
+        }
+
+        function editCustomer(id) {
+            const customer = customers.find(c => c.id === id);
+            if (!customer) return;
+            
+            document.getElementById('modalTitle').textContent = 'Edit Customer';
+            document.getElementById('customerName').value = customer.name;
+            document.getElementById('customerEmail').value = customer.email || '';
+            document.getElementById('customerPhone').value = customer.phone || '';
+            document.getElementById('customerCompany').value = customer.company || '';
+            document.getElementById('customerAddress').value = customer.address || '';
+            document.getElementById('customerNotes').value = customer.notes || '';
+            document.getElementById('customerStatus').value = customer.status;
+            document.getElementById('creditLimit').value = customer.creditLimit || '';
+            document.getElementById('paymentTerms').value = customer.paymentTerms || 30;
+            document.getElementById('taxId').value = customer.taxId || '';
+            
+            // Load files
+            const files = customerFiles[id] || [];
+            document.getElementById('fileList').innerHTML = files.map(file => `
+                <div class="file-item">
+                    <span><i class="fas fa-file"></i> ${file.name}</span>
+                    <button type="button" onclick="removeFile(${id}, '${file.name}')" style="background: #ff4444; border: none; color: white; padding: 2px 6px; border-radius: 3px; cursor: pointer;">×</button>
+                </div>
+            `).join('');
+            
+            editingId = id;
+            document.getElementById('customerModal').style.display = 'block';
+        }
+
+        function deleteCustomer(id) {
+            if (confirm('Are you sure you want to delete this customer?')) {
+                customers = customers.filter(c => c.id !== id);
+                delete customerFiles[id];
+                localStorage.setItem('customers', JSON.stringify(customers));
+                localStorage.setItem('customerFiles', JSON.stringify(customerFiles));
+                loadCustomers();
+                loadAnalytics();
+                showNotification('Customer deleted successfully', 'success');
             }
+        }
+
+        function viewCustomer(id) {
+            const customer = customers.find(c => c.id === id);
+            if (!customer) return;
+            
+            const files = customerFiles[id] || [];
+            const filesList = files.length > 0 ? files.map(f => f.name).join(', ') : 'No files';
+            
+            alert(`Customer Details:\n\nName: ${customer.name}\nEmail: ${customer.email || 'N/A'}\nPhone: ${customer.phone || 'N/A'}\nCompany: ${customer.company || 'N/A'}\nAddress: ${customer.address || 'N/A'}\nStatus: ${customer.status}\nCredit Limit: $${(customer.creditLimit || 0).toFixed(2)}\nPayment Terms: ${customer.paymentTerms || 30} days\nTax ID: ${customer.taxId || 'N/A'}\nNotes: ${customer.notes || 'N/A'}\nFiles: ${filesList}\nCreated: ${new Date(customer.createdAt).toLocaleString()}`);
+        }
+
+        function emailCustomer(id) {
+            const customer = customers.find(c => c.id === id);
+            if (!customer || !customer.email) {
+                showNotification('Customer email not available', 'error');
+                return;
+            }
+            
+            // Simulate email sending
+            const subject = prompt('Email Subject:', 'Follow-up from Majelani Accounting');
+            if (subject) {
+                const message = prompt('Email Message:', 'Dear ' + customer.name + ',\n\nThank you for your business.\n\nBest regards,\nMajelani Accounting Team');
+                if (message) {
+                    // Log communication
+                    const comm = {
+                        id: Date.now(),
+                        customerId: id,
+                        customerName: customer.name,
+                        type: 'email',
+                        subject: subject,
+                        message: message,
+                        date: new Date().toISOString()
+                    };
+                    communications.push(comm);
+                    localStorage.setItem('communications', JSON.stringify(communications));
+                    showNotification('Email sent and logged', 'success');
+                }
+            }
+        }
+
+        function viewFiles(id) {
+            const files = customerFiles[id] || [];
+            if (files.length === 0) {
+                showNotification('No files uploaded for this customer', 'info');
+                return;
+            }
+            
+            const filesList = files.map(f => `• ${f.name} (${f.size} bytes)`).join('\n');
+            alert(`Customer Files:\n\n${filesList}`);
+        }
+
+        // File Management
+        function handleFileUpload(input) {
+            const files = Array.from(input.files);
+            const fileList = document.getElementById('fileList');
+            
+            files.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <span><i class="fas fa-file"></i> ${file.name}</span>
+                    <button type="button" onclick="this.parentElement.remove()" style="background: #ff4444; border: none; color: white; padding: 2px 6px; border-radius: 3px; cursor: pointer;">×</button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(customerId, fileName) {
+            if (customerFiles[customerId]) {
+                customerFiles[customerId] = customerFiles[customerId].filter(f => f.name !== fileName);
+                localStorage.setItem('customerFiles', JSON.stringify(customerFiles));
+                editCustomer(customerId); // Refresh the modal
+            }
+        }
+
+        // Bulk Operations
+        function toggleBulkMode() {
+            bulkMode = !bulkMode;
+            const btn = document.getElementById('bulkBtn');
+            
+            if (bulkMode) {
+                btn.innerHTML = '<i class="fas fa-times"></i> Cancel Bulk';
+                btn.style.background = 'linear-gradient(45deg, #ff4444, #cc0000)';
+            } else {
+                btn.innerHTML = '<i class="fas fa-check-square"></i> Bulk Actions';
+                btn.style.background = 'linear-gradient(45deg, #ff6b6b, #ee5a52)';
+                selectedCustomers.clear();
+            }
+            
+            loadCustomers();
+        }
+
+        function toggleCustomerSelection(id) {
+            if (selectedCustomers.has(id)) {
+                selectedCustomers.delete(id);
+            } else {
+                selectedCustomers.add(id);
+            }
+            loadCustomers();
+        }
+
+        // Analytics
+        function loadAnalytics() {
+            const total = customers.length;
+            const vip = customers.filter(c => c.status === 'vip').length;
+            const totalRevenue = customers.reduce((sum, c) => sum + (c.balance || 0), 0);
+            const overdue = customers.filter(c => (c.balance || 0) < 0).length;
+            
+            document.getElementById('totalCustomers').textContent = total;
+            document.getElementById('vipCustomers').textContent = vip;
+            document.getElementById('totalRevenue').textContent = '$' + totalRevenue.toFixed(2);
+            document.getElementById('overdueCustomers').textContent = overdue;
+            
+            // Growth Chart
+            const ctx = document.getElementById('growthChart');
+            if (ctx) {
+                const chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'New Customers',
+                            data: [12, 19, 8, 15, 22, 18],
+                            borderColor: '#00ffff',
+                            backgroundColor: 'rgba(0, 255, 255, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#ffffff' }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: { color: '#ffffff' },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            },
+                            y: {
+                                ticks: { color: '#ffffff' },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Communications
+        function loadCommunications() {
+            const log = document.getElementById('communicationLog');
+            
+            if (communications.length === 0) {
+                log.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fas fa-comments"></i></div><h3>No communications yet</h3><p>Start communicating with your customers</p></div>';
+                return;
+            }
+            
+            log.innerHTML = communications.map(comm => `
+                <div class="comm-item">
+                    <div class="comm-header">
+                        <div>
+                            <span class="comm-type">${comm.type.toUpperCase()}</span>
+                            <strong>${comm.customerName}</strong>
+                        </div>
+                        <div class="comm-date">${new Date(comm.date).toLocaleString()}</div>
+                    </div>
+                    <div><strong>${comm.subject}</strong></div>
+                    <div>${comm.message}</div>
+                </div>
+            `).join('');
+        }
+
+        function openCommModal() {
+            populateCustomerSelects();
+            document.getElementById('commModal').style.display = 'block';
+        }
+
+        // Reminders
+        function loadReminders() {
+            const list = document.getElementById('remindersList');
+            
+            if (reminders.length === 0) {
+                list.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fas fa-bell"></i></div><h3>No reminders set</h3><p>Create reminders to stay on top of important tasks</p></div>';
+                return;
+            }
+            
+            const now = new Date();
+            list.innerHTML = reminders.map(reminder => {
+                const dueDate = new Date(reminder.date);
+                const isOverdue = dueDate < now;
+                
+                return `
+                    <div class="reminder-item" style="${isOverdue ? 'border-color: #ff4444;' : ''}">
+                        <div class="reminder-header">
+                            <div class="reminder-title">${reminder.title}</div>
+                            <div class="reminder-due ${isOverdue ? 'style="color: #ff4444;"' : ''}">${dueDate.toLocaleString()}</div>
+                        </div>
+                        <div><strong>${reminder.customerName}</strong> - ${reminder.type}</div>
+                        <div>${reminder.description}</div>
+                        <button onclick="completeReminder(${reminder.id})" style="margin-top: 10px; background: #00ff88; border: none; padding: 5px 10px; border-radius: 5px; color: #000; cursor: pointer;">Complete</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openReminderModal() {
+            populateCustomerSelects();
+            document.getElementById('reminderModal').style.display = 'block';
+        }
+
+        function completeReminder(id) {
+            reminders = reminders.filter(r => r.id !== id);
+            localStorage.setItem('reminders', JSON.stringify(reminders));
+            loadReminders();
+            showNotification('Reminder completed', 'success');
+        }
+
+        function checkReminders() {
+            const now = new Date();
+            const dueReminders = reminders.filter(r => {
+                const dueDate = new Date(r.date);
+                const timeDiff = dueDate - now;
+                return timeDiff > 0 && timeDiff < 24 * 60 * 60 * 1000; // Due within 24 hours
+            });
+            
+            if (dueReminders.length > 0) {
+                showNotification(`${dueReminders.length} reminder(s) due soon!`, 'info');
+            }
+        }
+
+        // Utility Functions
+        function populateCustomerSelects() {
+            const selects = ['commCustomer', 'reminderCustomer'];
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '<option value="">Select Customer</option>' + 
+                        customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                }
+            });
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 3000);
+        }
+
+        // Import/Export
+        function exportData() {
+            const data = {
+                customers: customers,
+                communications: communications,
+                reminders: reminders,
+                customerFiles: customerFiles
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'customers_export.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Data exported successfully', 'success');
+        }
+
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (data.customers) customers = data.customers;
+                    if (data.communications) communications = data.communications;
+                    if (data.reminders) reminders = data.reminders;
+                    if (data.customerFiles) customerFiles = data.customerFiles;
+                    
+                    localStorage.setItem('customers', JSON.stringify(customers));
+                    localStorage.setItem('communications', JSON.stringify(communications));
+                    localStorage.setItem('reminders', JSON.stringify(reminders));
+                    localStorage.setItem('customerFiles', JSON.stringify(customerFiles));
+                    
+                    loadCustomers();
+                    loadAnalytics();
+                    loadCommunications();
+                    loadReminders();
+                    populateCustomerSelects();
+                    
+                    showNotification('Data imported successfully', 'success');
+                } catch (error) {
+                    showNotification('Error importing data', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Form Submissions
+        document.getElementById('customerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const files = Array.from(document.getElementById('fileList').children).map(item => ({
+                name: item.querySelector('span').textContent.replace('📄 ', ''),
+                size: Math.floor(Math.random() * 10000) + 1000
+            }));
+            
+            const customerData = {
+                name: document.getElementById('customerName').value,
+                email: document.getElementById('customerEmail').value,
+                phone: document.getElementById('customerPhone').value,
+                company: document.getElementById('customerCompany').value,
+                address: document.getElementById('customerAddress').value,
+                notes: document.getElementById('customerNotes').value,
+                status: document.getElementById('customerStatus').value,
+                creditLimit: parseFloat(document.getElementById('creditLimit').value) || 0,
+                paymentTerms: parseInt(document.getElementById('paymentTerms').value) || 30,
+                taxId: document.getElementById('taxId').value,
+                balance: Math.random() * 10000 - 5000, // Random balance for demo
+                creditUsed: Math.random() * 1000
+            };
+            
+            if (editingId) {
+                const index = customers.findIndex(c => c.id === editingId);
+                customers[index] = { ...customers[index], ...customerData };
+                customerFiles[editingId] = files;
+            } else {
+                customerData.id = Date.now();
+                customerData.createdAt = new Date().toISOString();
+                customers.push(customerData);
+                customerFiles[customerData.id] = files;
+            }
+            
+            localStorage.setItem('customers', JSON.stringify(customers));
+            localStorage.setItem('customerFiles', JSON.stringify(customerFiles));
+            loadCustomers();
+            loadAnalytics();
+            populateCustomerSelects();
+            closeModal('customerModal');
+            showNotification('Customer saved successfully', 'success');
         });
 
-        // Load customers on page load
-        loadCustomers();
+        document.getElementById('commForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const customerId = parseInt(document.getElementById('commCustomer').value);
+            const customer = customers.find(c => c.id === customerId);
+            
+            const comm = {
+                id: Date.now(),
+                customerId: customerId,
+                customerName: customer.name,
+                type: document.getElementById('commType').value,
+                subject: document.getElementById('commSubject').value,
+                message: document.getElementById('commMessage').value,
+                date: new Date().toISOString()
+            };
+            
+            communications.push(comm);
+            localStorage.setItem('communications', JSON.stringify(communications));
+            loadCommunications();
+            closeModal('commModal');
+            showNotification('Communication logged successfully', 'success');
+        });
+
+        document.getElementById('reminderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const customerId = parseInt(document.getElementById('reminderCustomer').value);
+            const customer = customers.find(c => c.id === customerId);
+            
+            const reminder = {
+                id: Date.now(),
+                customerId: customerId,
+                customerName: customer.name,
+                type: document.getElementById('reminderType').value,
+                title: document.getElementById('reminderTitle').value,
+                description: document.getElementById('reminderDescription').value,
+                date: document.getElementById('reminderDate').value
+            };
+            
+            reminders.push(reminder);
+            localStorage.setItem('reminders', JSON.stringify(reminders));
+            loadReminders();
+            closeModal('reminderModal');
+            showNotification('Reminder created successfully', 'success');
+        });
+
+        // Search and Filter
+        document.getElementById('searchBox').addEventListener('input', filterCustomers);
+        document.getElementById('statusFilter').addEventListener('change', filterCustomers);
+        document.getElementById('segmentFilter').addEventListener('change', filterCustomers);
+
+        function filterCustomers() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const segmentFilter = document.getElementById('segmentFilter').value;
+            
+            let filteredCustomers = customers.filter(customer => {
+                const matchesSearch = customer.name.toLowerCase().includes(searchTerm) ||
+                    (customer.email && customer.email.toLowerCase().includes(searchTerm)) ||
+                    (customer.company && customer.company.toLowerCase().includes(searchTerm));
+                
+                const matchesStatus = !statusFilter || customer.status === statusFilter;
+                
+                let matchesSegment = true;
+                if (segmentFilter === 'high-value') {
+                    matchesSegment = (customer.balance || 0) > 5000;
+                } else if (segmentFilter === 'new') {
+                    const createdDate = new Date(customer.createdAt);
+                    const thirtyDaysAgo = new Date();
+                    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                    matchesSegment = createdDate > thirtyDaysAgo;
+                }
+                
+                return matchesSearch && matchesStatus && matchesSegment;
+            });
+            
+            const grid = document.getElementById('customersGrid');
+            if (filteredCustomers.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px;">No customers match your criteria</div>';
+            } else {
+                // Re-render with filtered customers
+                const originalCustomers = customers;
+                customers = filteredCustomers;
+                loadCustomers();
+                customers = originalCustomers;
+            }
+        }
     </script>
 </body>
 </html>
