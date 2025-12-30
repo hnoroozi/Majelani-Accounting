@@ -918,6 +918,30 @@
         </div>
     </div>
 
+    <!-- Custom Delete Confirmation Modal -->
+    <div class="custom-modal" id="deleteConfirmModal">
+        <div class="custom-modal-content">
+            <div class="custom-modal-header">
+                <h3 class="custom-modal-title">
+                    <i class="fas fa-trash"></i> Delete Invoice
+                </h3>
+                <button class="custom-modal-close" onclick="closeCustomModal('deleteConfirmModal')">&times;</button>
+            </div>
+            <div class="send-confirmation" style="background: rgba(255, 68, 68, 0.1); border-color: rgba(255, 68, 68, 0.3);">
+                <div class="confirm-title" style="color: #ff4444;">Confirm Deletion</div>
+                <div class="confirm-message" id="deleteConfirmMessage">
+                    Are you sure you want to delete this invoice?
+                </div>
+                <div class="confirm-actions">
+                    <button class="cancel-confirm-btn" onclick="closeCustomModal('deleteConfirmModal')">Cancel</button>
+                    <button class="confirm-btn" onclick="confirmDeleteInvoice()" style="background: linear-gradient(45deg, #ff4444, #cc0000); color: white;">
+                        <i class="fas fa-trash"></i> Delete Invoice
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Data Storage
         let invoices = JSON.parse(localStorage.getItem('invoices')) || [
@@ -1085,13 +1109,19 @@
         }
 
         function deleteInvoice(id) {
-            if (confirm('Are you sure you want to delete this invoice?')) {
-                invoices = invoices.filter(i => i.id !== id);
-                localStorage.setItem('invoices', JSON.stringify(invoices));
-                loadInvoices();
-                updateFooterStats();
-                showNotification('Invoice deleted successfully', 'success');
-            }
+            const invoice = invoices.find(i => i.id === id);
+            if (!invoice) return;
+            
+            document.getElementById('deleteConfirmMessage').innerHTML = `
+                Are you sure you want to delete <strong>${invoice.number}</strong>?<br><br>
+                <strong>Customer:</strong> ${invoice.customerName}<br>
+                <strong>Amount:</strong> $${invoice.total.toFixed(2)}<br><br>
+                <span style="color: #ff4444;">This action cannot be undone.</span>
+            `;
+            
+            // Store invoice ID for confirmation
+            document.getElementById('deleteConfirmModal').setAttribute('data-invoice-id', id);
+            document.getElementById('deleteConfirmModal').style.display = 'block';
         }
 
         function viewInvoice(id) {
@@ -1218,6 +1248,21 @@
                 updateFooterStats();
                 closeCustomModal('sendConfirmModal');
                 showNotification(`Invoice ${invoice.number} sent successfully`, 'success');
+            }
+        }
+
+        function confirmDeleteInvoice() {
+            const modalElement = document.getElementById('deleteConfirmModal');
+            const invoiceId = parseInt(modalElement.getAttribute('data-invoice-id'));
+            const invoice = invoices.find(i => i.id === invoiceId);
+            
+            if (invoice) {
+                invoices = invoices.filter(i => i.id !== invoiceId);
+                localStorage.setItem('invoices', JSON.stringify(invoices));
+                loadInvoices();
+                updateFooterStats();
+                closeCustomModal('deleteConfirmModal');
+                showNotification(`Invoice ${invoice.number} deleted successfully`, 'success');
             }
         }
 

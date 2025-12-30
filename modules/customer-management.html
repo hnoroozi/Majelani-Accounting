@@ -1663,15 +1663,19 @@
         }
 
         function deleteCustomer(id) {
-            if (confirm('Are you sure you want to delete this customer?')) {
-                customers = customers.filter(c => c.id !== id);
-                delete customerFiles[id];
-                localStorage.setItem('customers', JSON.stringify(customers));
-                localStorage.setItem('customerFiles', JSON.stringify(customerFiles));
-                loadCustomers();
-                loadAnalytics();
-                showNotification('Customer deleted successfully', 'success');
-            }
+            const customer = customers.find(c => c.id === id);
+            if (!customer) return;
+            
+            document.getElementById('deleteConfirmMessage').innerHTML = `
+                Are you sure you want to delete <strong>${customer.name}</strong>?<br><br>
+                <strong>Company:</strong> ${customer.company || 'N/A'}<br>
+                <strong>Email:</strong> ${customer.email || 'N/A'}<br><br>
+                <span style="color: #ff4444;">This action cannot be undone and will remove all associated data.</span>
+            `;
+            
+            // Store customer ID for confirmation
+            document.getElementById('deleteConfirmModal').setAttribute('data-customer-id', id);
+            document.getElementById('deleteConfirmModal').style.display = 'block';
         }
 
         function viewCustomer(id) {
@@ -2129,6 +2133,24 @@
             document.getElementById('emailMessage').value = '';
         }
 
+        function confirmDeleteCustomer() {
+            const modalElement = document.getElementById('deleteConfirmModal');
+            const customerId = parseInt(modalElement.getAttribute('data-customer-id'));
+            const customer = customers.find(c => c.id === customerId);
+            
+            if (customer) {
+                customers = customers.filter(c => c.id !== customerId);
+                delete customerFiles[customerId];
+                localStorage.setItem('customers', JSON.stringify(customers));
+                localStorage.setItem('customerFiles', JSON.stringify(customerFiles));
+                loadCustomers();
+                loadAnalytics();
+                updateFooterStats();
+                closeCustomModal('deleteConfirmModal');
+                showNotification(`Customer ${customer.name} deleted successfully`, 'success');
+            }
+        }
+
         // Utility Functions
         function populateCustomerSelects() {
             const selects = ['commCustomer', 'reminderCustomer'];
@@ -2418,5 +2440,29 @@
             </div>
         </div>
     </footer>
+
+    <!-- Custom Delete Confirmation Modal -->
+    <div class="custom-modal" id="deleteConfirmModal">
+        <div class="custom-modal-content">
+            <div class="custom-modal-header">
+                <h3 class="custom-modal-title">
+                    <i class="fas fa-trash"></i> Delete Customer
+                </h3>
+                <button class="custom-modal-close" onclick="closeCustomModal('deleteConfirmModal')">&times;</button>
+            </div>
+            <div class="send-confirmation" style="background: rgba(255, 68, 68, 0.1); border-color: rgba(255, 68, 68, 0.3);">
+                <div class="confirm-title" style="color: #ff4444;">Confirm Deletion</div>
+                <div class="confirm-message" id="deleteConfirmMessage">
+                    Are you sure you want to delete this customer?
+                </div>
+                <div class="confirm-actions">
+                    <button class="cancel-confirm-btn" onclick="closeCustomModal('deleteConfirmModal')">Cancel</button>
+                    <button class="confirm-btn" onclick="confirmDeleteCustomer()" style="background: linear-gradient(45deg, #ff4444, #cc0000); color: white;">
+                        <i class="fas fa-trash"></i> Delete Customer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
