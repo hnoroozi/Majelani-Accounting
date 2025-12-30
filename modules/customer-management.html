@@ -996,6 +996,72 @@
                         <label class="form-label">Tax ID</label>
                         <input type="text" class="form-input" id="taxId">
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Currency</label>
+                        <select class="form-select" id="currency">
+                            <option value="USD">USD - US Dollar</option>
+                            <option value="EUR">EUR - Euro</option>
+                            <option value="IRR">IRR - Iranian Rial</option>
+                            <option value="GBP">GBP - British Pound</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Customer Type</label>
+                        <select class="form-select" id="customerType">
+                            <option value="individual">Individual</option>
+                            <option value="business">Business</option>
+                            <option value="government">Government</option>
+                            <option value="non-profit">Non-Profit</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Industry</label>
+                        <select class="form-select" id="industry">
+                            <option value="">Select Industry</option>
+                            <option value="technology">Technology</option>
+                            <option value="healthcare">Healthcare</option>
+                            <option value="finance">Finance</option>
+                            <option value="retail">Retail</option>
+                            <option value="manufacturing">Manufacturing</option>
+                            <option value="construction">Construction</option>
+                            <option value="education">Education</option>
+                            <option value="hospitality">Hospitality</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Sales Rep</label>
+                        <input type="text" class="form-input" id="salesRep">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Website</label>
+                        <input type="url" class="form-input" id="website" placeholder="https://">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Discount Rate (%)</label>
+                        <input type="number" class="form-input" id="discountRate" step="0.01" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Preferred Contact Method</label>
+                        <select class="form-select" id="preferredContact">
+                            <option value="email">Email</option>
+                            <option value="phone">Phone</option>
+                            <option value="sms">SMS</option>
+                            <option value="mail">Mail</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Account Manager</label>
+                        <input type="text" class="form-input" id="accountManager">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Customer Since</label>
+                        <input type="date" class="form-input" id="customerSince">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Purchase Date</label>
+                        <input type="date" class="form-input" id="lastPurchase">
+                    </div>
                     <div class="form-group full-width">
                         <label class="form-label">Address</label>
                         <textarea class="form-textarea" id="customerAddress"></textarea>
@@ -1186,6 +1252,16 @@
                 taxId: "1234567890",
                 balance: 12500.75,
                 creditUsed: 8200.50,
+                currency: "USD",
+                customerType: "business",
+                industry: "retail",
+                salesRep: "John Smith",
+                website: "https://rezaeitrading.com",
+                discountRate: 5.0,
+                preferredContact: "email",
+                accountManager: "Sarah Johnson",
+                customerSince: "2023-01-15",
+                lastPurchase: "2024-12-10",
                 createdAt: "2024-01-15T10:30:00.000Z"
             },
             {
@@ -1202,6 +1278,16 @@
                 taxId: "0987654321",
                 balance: -2300.25,
                 creditUsed: 15600.00,
+                currency: "USD",
+                customerType: "business",
+                industry: "technology",
+                salesRep: "Mike Davis",
+                website: "https://modernadvertising.ir",
+                discountRate: 2.5,
+                preferredContact: "phone",
+                accountManager: "Lisa Chen",
+                customerSince: "2024-02-20",
+                lastPurchase: "2024-11-25",
                 createdAt: "2024-02-20T14:15:00.000Z"
             },
             {
@@ -1505,6 +1591,16 @@
             document.getElementById('creditLimit').value = customer.creditLimit || '';
             document.getElementById('paymentTerms').value = customer.paymentTerms || 30;
             document.getElementById('taxId').value = customer.taxId || '';
+            document.getElementById('currency').value = customer.currency || 'USD';
+            document.getElementById('customerType').value = customer.customerType || 'business';
+            document.getElementById('industry').value = customer.industry || '';
+            document.getElementById('salesRep').value = customer.salesRep || '';
+            document.getElementById('website').value = customer.website || '';
+            document.getElementById('discountRate').value = customer.discountRate || '';
+            document.getElementById('preferredContact').value = customer.preferredContact || 'email';
+            document.getElementById('accountManager').value = customer.accountManager || '';
+            document.getElementById('customerSince').value = customer.customerSince || '';
+            document.getElementById('lastPurchase').value = customer.lastPurchase || '';
             
             // Load files
             const files = customerFiles[id] || [];
@@ -1634,6 +1730,66 @@
                             <i class="fas fa-folder"></i> Files
                         </div>
                         <div class="detail-value">${files.length} file(s) uploaded</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-money-bill-wave"></i> Currency
+                        </div>
+                        <div class="detail-value">${customer.currency || 'USD'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-user-tie"></i> Customer Type
+                        </div>
+                        <div class="detail-value">${(customer.customerType || 'business').charAt(0).toUpperCase() + (customer.customerType || 'business').slice(1)}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-industry"></i> Industry
+                        </div>
+                        <div class="detail-value">${(customer.industry || 'Not specified').charAt(0).toUpperCase() + (customer.industry || 'Not specified').slice(1)}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-user-friends"></i> Sales Rep
+                        </div>
+                        <div class="detail-value">${customer.salesRep || 'Not assigned'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-globe"></i> Website
+                        </div>
+                        <div class="detail-value">${customer.website ? `<a href="${customer.website}" target="_blank" style="color: #00ffff;">${customer.website}</a>` : 'Not provided'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-percentage"></i> Discount Rate
+                        </div>
+                        <div class="detail-value">${customer.discountRate || 0}%</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-phone-alt"></i> Preferred Contact
+                        </div>
+                        <div class="detail-value">${(customer.preferredContact || 'email').charAt(0).toUpperCase() + (customer.preferredContact || 'email').slice(1)}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-user-cog"></i> Account Manager
+                        </div>
+                        <div class="detail-value">${customer.accountManager || 'Not assigned'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-calendar-check"></i> Customer Since
+                        </div>
+                        <div class="detail-value">${customer.customerSince ? new Date(customer.customerSince).toLocaleDateString() : 'Not specified'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-shopping-cart"></i> Last Purchase
+                        </div>
+                        <div class="detail-value">${customer.lastPurchase ? new Date(customer.lastPurchase).toLocaleDateString() : 'No purchases yet'}</div>
                     </div>
                 </div>
             `;
@@ -2028,6 +2184,16 @@
                 creditLimit: parseFloat(document.getElementById('creditLimit').value) || 0,
                 paymentTerms: parseInt(document.getElementById('paymentTerms').value) || 30,
                 taxId: document.getElementById('taxId').value,
+                currency: document.getElementById('currency').value,
+                customerType: document.getElementById('customerType').value,
+                industry: document.getElementById('industry').value,
+                salesRep: document.getElementById('salesRep').value,
+                website: document.getElementById('website').value,
+                discountRate: parseFloat(document.getElementById('discountRate').value) || 0,
+                preferredContact: document.getElementById('preferredContact').value,
+                accountManager: document.getElementById('accountManager').value,
+                customerSince: document.getElementById('customerSince').value,
+                lastPurchase: document.getElementById('lastPurchase').value,
                 balance: Math.random() * 10000 - 5000, // Random balance for demo
                 creditUsed: Math.random() * 1000
             };
