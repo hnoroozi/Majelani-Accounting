@@ -541,16 +541,246 @@
         .notification.error { background: linear-gradient(45deg, #ff4444, #cc0000); }
         .notification.info { background: linear-gradient(45deg, #00ffff, #0080ff); }
 
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .custom-modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 2px solid #00ffff;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 255, 255, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        .custom-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .custom-modal-title {
+            color: #00ffff;
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .custom-modal-close {
+            background: linear-gradient(45deg, #ff4444, #cc0000);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .custom-modal-close:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+        }
+
+        .custom-modal-body {
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .customer-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .detail-item {
+            background: rgba(0, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .detail-label {
+            color: #00ffff;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-value {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .detail-value.large {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .detail-value.positive {
+            color: #00ff88;
+        }
+
+        .detail-value.negative {
+            color: #ff4444;
+        }
+
+        .files-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .file-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-card:hover {
+            border-color: #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .file-icon {
+            font-size: 32px;
+            color: #00ffff;
+            margin-bottom: 10px;
+        }
+
+        .file-name {
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            word-break: break-word;
+        }
+
+        .file-size {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .email-compose {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .compose-field {
+            margin-bottom: 20px;
+        }
+
+        .compose-label {
+            color: #00ffff;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .compose-input, .compose-textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .compose-input:focus, .compose-textarea:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .compose-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .compose-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .send-btn {
+            background: linear-gradient(45deg, #00ff88, #00ffff);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            color: #000;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translate(-50%, -60%); opacity: 0; }
+            to { transform: translate(-50%, -50%); opacity: 1; }
+        }
+
         @media (max-width: 768px) {
-            .form-grid {
+            .customer-detail-grid {
                 grid-template-columns: 1fr;
             }
             
-            .customers-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .analytics-grid {
+            .files-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -850,6 +1080,70 @@
                     <button type="submit" class="save-btn">Create Reminder</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Custom Customer Detail Modal -->
+    <div class="custom-modal" id="customerDetailModal">
+        <div class="custom-modal-content">
+            <div class="custom-modal-header">
+                <h3 class="custom-modal-title" id="detailModalTitle">
+                    <i class="fas fa-user"></i> Customer Details
+                </h3>
+                <button class="custom-modal-close" onclick="closeCustomModal('customerDetailModal')">&times;</button>
+            </div>
+            <div class="custom-modal-body" id="customerDetailBody">
+                <!-- Customer details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Files Modal -->
+    <div class="custom-modal" id="filesModal">
+        <div class="custom-modal-content">
+            <div class="custom-modal-header">
+                <h3 class="custom-modal-title">
+                    <i class="fas fa-folder-open"></i> Customer Files
+                </h3>
+                <button class="custom-modal-close" onclick="closeCustomModal('filesModal')">&times;</button>
+            </div>
+            <div class="custom-modal-body" id="filesModalBody">
+                <!-- Files will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Email Modal -->
+    <div class="custom-modal" id="emailModal">
+        <div class="custom-modal-content">
+            <div class="custom-modal-header">
+                <h3 class="custom-modal-title">
+                    <i class="fas fa-envelope"></i> Send Email
+                </h3>
+                <button class="custom-modal-close" onclick="closeCustomModal('emailModal')">&times;</button>
+            </div>
+            <div class="custom-modal-body">
+                <div class="email-compose">
+                    <div class="compose-field">
+                        <label class="compose-label">To:</label>
+                        <input type="email" class="compose-input" id="emailTo" readonly>
+                    </div>
+                    <div class="compose-field">
+                        <label class="compose-label">Subject:</label>
+                        <input type="text" class="compose-input" id="emailSubject" placeholder="Enter email subject...">
+                    </div>
+                    <div class="compose-field">
+                        <label class="compose-label">Message:</label>
+                        <textarea class="compose-textarea" id="emailMessage" placeholder="Type your message here..."></textarea>
+                    </div>
+                    <div class="compose-actions">
+                        <button type="button" class="cancel-btn" onclick="closeCustomModal('emailModal')">Cancel</button>
+                        <button type="button" class="send-btn" onclick="sendEmail()">
+                            <i class="fas fa-paper-plane"></i> Send Email
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1220,9 +1514,109 @@
             if (!customer) return;
             
             const files = customerFiles[id] || [];
-            const filesList = files.length > 0 ? files.map(f => f.name).join(', ') : 'No files';
+            const balance = customer.balance || 0;
+            const creditUsed = customer.creditUsed || 0;
+            const creditLimit = customer.creditLimit || 0;
+            const creditAvailable = creditLimit - creditUsed;
             
-            alert(`Customer Details:\n\nName: ${customer.name}\nEmail: ${customer.email || 'N/A'}\nPhone: ${customer.phone || 'N/A'}\nCompany: ${customer.company || 'N/A'}\nAddress: ${customer.address || 'N/A'}\nStatus: ${customer.status}\nCredit Limit: $${(customer.creditLimit || 0).toFixed(2)}\nPayment Terms: ${customer.paymentTerms || 30} days\nTax ID: ${customer.taxId || 'N/A'}\nNotes: ${customer.notes || 'N/A'}\nFiles: ${filesList}\nCreated: ${new Date(customer.createdAt).toLocaleString()}`);
+            document.getElementById('detailModalTitle').innerHTML = `
+                <i class="fas fa-user"></i> ${customer.name}
+            `;
+            
+            document.getElementById('customerDetailBody').innerHTML = `
+                <div class="customer-detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-envelope"></i> Email
+                        </div>
+                        <div class="detail-value">${customer.email || 'Not provided'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-phone"></i> Phone
+                        </div>
+                        <div class="detail-value">${customer.phone || 'Not provided'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-building"></i> Company
+                        </div>
+                        <div class="detail-value">${customer.company || 'Not provided'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-tag"></i> Status
+                        </div>
+                        <div class="detail-value">
+                            <span class="customer-status status-${customer.status}">${customer.status.toUpperCase()}</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-dollar-sign"></i> Current Balance
+                        </div>
+                        <div class="detail-value large ${balance >= 0 ? 'positive' : 'negative'}">
+                            $${Math.abs(balance).toFixed(2)} ${balance < 0 ? '(Overdue)' : ''}
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-credit-card"></i> Credit Limit
+                        </div>
+                        <div class="detail-value large">$${creditLimit.toFixed(2)}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-chart-line"></i> Credit Used
+                        </div>
+                        <div class="detail-value">$${creditUsed.toFixed(2)}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-piggy-bank"></i> Credit Available
+                        </div>
+                        <div class="detail-value positive">$${creditAvailable.toFixed(2)}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-calendar-alt"></i> Payment Terms
+                        </div>
+                        <div class="detail-value">${customer.paymentTerms || 30} days</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-id-card"></i> Tax ID
+                        </div>
+                        <div class="detail-value">${customer.taxId || 'Not provided'}</div>
+                    </div>
+                    <div class="detail-item" style="grid-column: 1 / -1;">
+                        <div class="detail-label">
+                            <i class="fas fa-map-marker-alt"></i> Address
+                        </div>
+                        <div class="detail-value">${customer.address || 'Not provided'}</div>
+                    </div>
+                    <div class="detail-item" style="grid-column: 1 / -1;">
+                        <div class="detail-label">
+                            <i class="fas fa-sticky-note"></i> Notes
+                        </div>
+                        <div class="detail-value">${customer.notes || 'No notes available'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-calendar-plus"></i> Created Date
+                        </div>
+                        <div class="detail-value">${new Date(customer.createdAt).toLocaleString()}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-folder"></i> Files
+                        </div>
+                        <div class="detail-value">${files.length} file(s) uploaded</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('customerDetailModal').style.display = 'block';
         }
 
         function emailCustomer(id) {
@@ -1232,37 +1626,60 @@
                 return;
             }
             
-            // Simulate email sending
-            const subject = prompt('Email Subject:', 'Follow-up from Majelani Accounting');
-            if (subject) {
-                const message = prompt('Email Message:', 'Dear ' + customer.name + ',\n\nThank you for your business.\n\nBest regards,\nMajelani Accounting Team');
-                if (message) {
-                    // Log communication
-                    const comm = {
-                        id: Date.now(),
-                        customerId: id,
-                        customerName: customer.name,
-                        type: 'email',
-                        subject: subject,
-                        message: message,
-                        date: new Date().toISOString()
-                    };
-                    communications.push(comm);
-                    localStorage.setItem('communications', JSON.stringify(communications));
-                    showNotification('Email sent and logged', 'success');
-                }
-            }
+            document.getElementById('emailTo').value = customer.email;
+            document.getElementById('emailSubject').value = `Follow-up from Majelani Accounting - ${customer.name}`;
+            document.getElementById('emailMessage').value = `Dear ${customer.name},\n\nThank you for your continued business with us.\n\nBest regards,\nMajelani Accounting Team`;
+            
+            // Store customer ID for sending
+            document.getElementById('emailModal').setAttribute('data-customer-id', id);
+            document.getElementById('emailModal').style.display = 'block';
         }
 
         function viewFiles(id) {
+            const customer = customers.find(c => c.id === id);
             const files = customerFiles[id] || [];
+            
             if (files.length === 0) {
-                showNotification('No files uploaded for this customer', 'info');
-                return;
+                document.getElementById('filesModalBody').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-folder-open"></i>
+                        </div>
+                        <h3>No files uploaded</h3>
+                        <p>This customer hasn't uploaded any files yet</p>
+                    </div>
+                `;
+            } else {
+                document.getElementById('filesModalBody').innerHTML = `
+                    <h4 style="color: #00ffff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-user"></i> ${customer.name} - Files (${files.length})
+                    </h4>
+                    <div class="files-grid">
+                        ${files.map(file => {
+                            const extension = file.name.split('.').pop().toLowerCase();
+                            let icon = 'fas fa-file';
+                            
+                            if (['pdf'].includes(extension)) icon = 'fas fa-file-pdf';
+                            else if (['doc', 'docx'].includes(extension)) icon = 'fas fa-file-word';
+                            else if (['xls', 'xlsx'].includes(extension)) icon = 'fas fa-file-excel';
+                            else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) icon = 'fas fa-file-image';
+                            else if (['dwg', 'cad'].includes(extension)) icon = 'fas fa-drafting-compass';
+                            
+                            return `
+                                <div class="file-card">
+                                    <div class="file-icon">
+                                        <i class="${icon}"></i>
+                                    </div>
+                                    <div class="file-name">${file.name}</div>
+                                    <div class="file-size">${(file.size / 1024).toFixed(1)} KB</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
             }
             
-            const filesList = files.map(f => `• ${f.name} (${f.size} bytes)`).join('\n');
-            alert(`Customer Files:\n\n${filesList}`);
+            document.getElementById('filesModal').style.display = 'block';
         }
 
         // File Management
@@ -1445,6 +1862,46 @@
             if (dueReminders.length > 0) {
                 showNotification(`${dueReminders.length} reminder(s) due soon!`, 'info');
             }
+        }
+
+        // Custom Modal Functions
+        function closeCustomModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function sendEmail() {
+            const modalElement = document.getElementById('emailModal');
+            const customerId = parseInt(modalElement.getAttribute('data-customer-id'));
+            const customer = customers.find(c => c.id === customerId);
+            
+            const subject = document.getElementById('emailSubject').value.trim();
+            const message = document.getElementById('emailMessage').value.trim();
+            
+            if (!subject || !message) {
+                showNotification('Please fill in both subject and message', 'error');
+                return;
+            }
+            
+            // Log communication
+            const comm = {
+                id: Date.now(),
+                customerId: customerId,
+                customerName: customer.name,
+                type: 'email',
+                subject: subject,
+                message: message,
+                date: new Date().toISOString()
+            };
+            
+            communications.push(comm);
+            localStorage.setItem('communications', JSON.stringify(communications));
+            
+            closeCustomModal('emailModal');
+            showNotification('Email sent and logged successfully', 'success');
+            
+            // Clear form
+            document.getElementById('emailSubject').value = '';
+            document.getElementById('emailMessage').value = '';
         }
 
         // Utility Functions
