@@ -36,38 +36,12 @@
         .sidebar-header {
             padding: 20px;
             border-bottom: 1px solid rgba(0, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 15px;
+            position: relative;
         }
 
-        .logo {
-            width: 40px;
-            height: 40px;
-            background: radial-gradient(circle, #00ffff, #0080ff);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-        }
-
-        .logo i {
-            color: #000;
-            font-size: 18px;
-        }
-
-        .sidebar-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #00ffff;
-            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-            transition: opacity 0.3s ease;
-        }
-
-        .sidebar.collapsed .sidebar-title {
-            opacity: 0;
-            width: 0;
+        .sidebar-search {
+            position: relative;
+            width: 100%;
         }
 
         .toggle-btn {
@@ -337,10 +311,12 @@
     <div class="main-content">
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <div class="logo">
-                <i class="fas fa-calculator"></i>
+            <div class="sidebar-search">
+                <input type="text" placeholder="Search modules..." id="sidebarSearch" style="width: 100%; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 255, 255, 0.3); border-radius: 25px; padding: 12px 40px 12px 16px; color: white; font-size: 14px;">
+                <button onclick="searchSidebar()" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #00ffff; cursor: pointer; padding: 4px;">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
-            <div class="sidebar-title">Majelani Accounting</div>
         </div>
         <button class="toggle-btn" onclick="toggleSidebar()">
             <i class="fas fa-chevron-left" id="toggleIcon"></i>
@@ -774,6 +750,69 @@
                 setTimeout(() => document.body.removeChild(notification), 300);
             }, 3000);
         }
+
+        // Sidebar search function
+        function searchSidebar() {
+            const query = document.getElementById('sidebarSearch').value.trim().toLowerCase();
+            const menuItems = document.querySelectorAll('.submenu-item');
+            let found = false;
+            
+            // Clear previous highlights
+            menuItems.forEach(item => {
+                item.style.background = '';
+                item.style.display = '';
+            });
+            
+            if (query) {
+                menuItems.forEach(item => {
+                    if (item.textContent.toLowerCase().includes(query)) {
+                        item.style.background = 'rgba(0, 255, 255, 0.2)';
+                        item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        found = true;
+                        
+                        // Expand parent menu
+                        const parentMenu = item.closest('.menu-item');
+                        if (parentMenu) {
+                            parentMenu.classList.add('expanded');
+                        }
+                        
+                        setTimeout(() => {
+                            item.style.background = 'rgba(0, 255, 255, 0.1)';
+                        }, 2000);
+                    } else if (query.length > 0) {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                if (found) {
+                    showNotification(`Found "${query}" in modules`, 'success');
+                } else {
+                    showNotification(`No results for "${query}"`, 'info');
+                }
+            }
+        }
+        
+        // Search on Enter key
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('sidebarSearch');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchSidebar();
+                    }
+                });
+                
+                searchInput.addEventListener('input', function() {
+                    if (this.value.trim() === '') {
+                        // Show all items when search is cleared
+                        document.querySelectorAll('.submenu-item').forEach(item => {
+                            item.style.display = '';
+                            item.style.background = '';
+                        });
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
