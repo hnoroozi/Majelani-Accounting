@@ -3,8 +3,55 @@
 <head>
     <title>🤖 Majelani AI Assistant</title>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/global-layout.css">
 </head>
-<body style="padding:20px; background:#1a1a1a; color:white; font-family:Arial; min-height:100vh;">
+<body>
+    <!-- Global Header -->
+    <header class="global-header">
+        <div class="header-left">
+            <a href="index.html" class="header-logo">
+                <div class="logo-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <span>Majelani Accounting</span>
+            </a>
+            <nav class="header-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="modules/customer-management.html" class="nav-item">
+                    <i class="fas fa-users"></i> Customers
+                </a>
+                <a href="index.html" class="nav-item active">
+                    <i class="fas fa-robot"></i> AI Assistant
+                </a>
+            </nav>
+        </div>
+        
+        <div class="header-right">
+            <div class="header-search">
+                <input type="text" class="search-input" placeholder="Search AI responses..." id="globalSearch">
+                <button class="search-btn" onclick="performGlobalSearch()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <div class="header-actions">
+                <button class="header-btn notification-badge" onclick="showNotifications()">
+                    <i class="fas fa-bell"></i>
+                </button>
+                <button class="header-btn" onclick="quickAdd()">
+                    <i class="fas fa-plus"></i> Quick Add
+                </button>
+                <button class="header-btn secondary" onclick="showProfile()">
+                    <i class="fas fa-user"></i> Profile
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content" style="padding:20px; background:#1a1a1a; color:white; font-family:Arial;">
     <h1 style="text-align:center; color:#22d3ee;">🤖 Majelani AI Assistant</h1>
     
     <div style="max-width:800px; margin:0 auto; background:#2a2a2a; padding:30px; border-radius:15px;">
@@ -78,6 +125,120 @@
                 button.disabled = false;
                 button.textContent = 'Ask AI Assistant';
             }
+        }
+    </script>
+
+    </div>
+
+    <!-- Global Footer -->
+    <footer class="global-footer">
+        <div class="footer-left">
+            <div class="footer-status">
+                <div class="status-dot"></div>
+                <span>AI Online</span>
+            </div>
+            <div class="footer-info">
+                <span>API: Connected</span>
+                <span>Model: GPT-4o-mini</span>
+                <span>Response Time: <1s</span>
+            </div>
+        </div>
+        
+        <div class="footer-right">
+            <div class="footer-links">
+                <a href="#" class="footer-link">AI Help</a>
+                <a href="#" class="footer-link">Examples</a>
+                <a href="#" class="footer-link">API Docs</a>
+            </div>
+            <div class="footer-actions">
+                <button class="footer-btn" onclick="exportData()">
+                    <i class="fas fa-download"></i> Export
+                </button>
+                <button class="footer-btn" onclick="showSettings()">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global Header & Footer Functions
+        function performGlobalSearch() {
+            const query = document.getElementById('globalSearch').value.trim();
+            if (query) {
+                document.getElementById('text').value = query;
+                showNotification('Query loaded into AI input', 'success');
+            }
+        }
+
+        function showNotifications() {
+            showNotification('AI Assistant • Ready for questions • All systems operational', 'info');
+        }
+
+        function quickAdd() {
+            const examples = [
+                'What is accounting?',
+                'Explain balance sheet',
+                'How to calculate ROI?',
+                'Define cash flow'
+            ];
+            const example = examples[Math.floor(Math.random() * examples.length)];
+            document.getElementById('text').value = example;
+            showNotification('Example question loaded', 'success');
+        }
+
+        function showProfile() {
+            showNotification('AI Assistant User • Unlimited queries • Full access', 'info');
+        }
+
+        function exportData() {
+            const result = document.getElementById('result').textContent;
+            if (result && result !== 'Response will appear here...') {
+                const blob = new Blob([result], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'ai-response.txt';
+                a.click();
+                URL.revokeObjectURL(url);
+                showNotification('Response exported successfully', 'success');
+            } else {
+                showNotification('No response to export', 'error');
+            }
+        }
+
+        function showSettings() {
+            showNotification('AI Settings • Language • Model • Response Length', 'info');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 90px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: bold;
+                z-index: 10000;
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
+            `;
+            
+            if (type === 'success') notification.style.background = 'linear-gradient(45deg, #00ff88, #00cc66)';
+            else if (type === 'error') notification.style.background = 'linear-gradient(45deg, #ff4444, #cc0000)';
+            else notification.style.background = 'linear-gradient(45deg, #00ffff, #0080ff)';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 3000);
         }
     </script>
 </body>

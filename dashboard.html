@@ -18,8 +18,8 @@
         .sidebar {
             position: fixed;
             left: 0;
-            top: 0;
-            height: 100vh;
+            top: var(--header-height);
+            height: calc(100vh - var(--header-height) - var(--footer-height));
             width: 280px;
             background: linear-gradient(180deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
             border-right: 2px solid #00ffff;
@@ -178,9 +178,11 @@
 
         .main-content {
             margin-left: 280px;
+            margin-top: var(--header-height);
+            margin-bottom: var(--footer-height);
             padding: 30px;
             transition: margin-left 0.3s ease;
-            min-height: 100vh;
+            min-height: calc(100vh - var(--header-height) - var(--footer-height));
         }
 
         .sidebar.collapsed + .main-content {
